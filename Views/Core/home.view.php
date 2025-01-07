@@ -21,12 +21,13 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
 
     }
 </style>
-<img alt="Background" src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/Background.jpg' ?>"> <div class="text-center grid-3">
+
+<img alt="Background" src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/Background.jpg' ?>"> < class="text-center grid-3">
     <h3>
         Bienvenue sur votre site <?= UsersSessionsController::getInstance()->getCurrentUser()?->getPseudo() ?? '' ?>!
     </h3>
     <p>Feather est maintenant prêt à être développé !</p>
-</div>
+
 
 
 

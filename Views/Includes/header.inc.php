@@ -33,9 +33,15 @@ $menus = MenusModel::getInstance();
                 <button class="text-gray-500 w-10 h-10 relative focus:outline-none" @click="open = !open">
                     <span class="sr-only">Open main menu</span>
                     <div class="block w-5 absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                        <span aria-hidden="true" class="block absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out" :class="{'rotate-45': open,' -translate-y-1.5': !open }"></span>
-                        <span aria-hidden="true" class="block absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out" :class="{'opacity-0': open }"></span>
-                        <span aria-hidden="true" class="block absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out" :class="{'-rotate-45': open, ' translate-y-1.5': !open}"></span>
+                        <span aria-hidden="true"
+                              class="block absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out"
+                              :class="{'rotate-45': open,' -translate-y-1.5': !open }"></span>
+                        <span aria-hidden="true"
+                              class="block absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out"
+                              :class="{'opacity-0': open }"></span>
+                        <span aria-hidden="true"
+                              class="block absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out"
+                              :class="{'-rotate-45': open, ' translate-y-1.5': !open}"></span>
                     </div>
                 </button>
                 <!-- Menu -->
@@ -43,7 +49,20 @@ $menus = MenusModel::getInstance();
                     <li><a href="#" class="text-gray-500">Home</a></li>
                     <li><a href="#" class="text-gray-500">About</a></li>
                     <li><a href="#" class="text-gray-500">Services</a></li>
-                    <li><a href="#" class="text-gray-500">Contact</a></li>
+                    <li><div>
+                            <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>cmw-admin"
+                               class="bg-white hover:bg-white text-blue-500 py-2 px-4 rounded">
+                                Sign Up
+                            </a>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                            <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>login"
+                               class="bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded">
+                                Connexion
+                            </a>
+                        </div></li>
                 </ul>
             </nav>
         </div>
@@ -59,7 +78,7 @@ $menus = MenusModel::getInstance();
             placeholder="Search"
             aria-label="Search"
             id="exampleFormControlInput2"
-            aria-describedby="button-addon2" />
+            aria-describedby="button-addon2"/>
         <span
             class="flex items-center whitespace-nowrap px-3 py-[0.25rem] text-surface dark:border-neutral-400 dark:text-white [&>svg]:h-5 [&>svg]:w-5"
             id="button-addon2">
@@ -73,21 +92,12 @@ $menus = MenusModel::getInstance();
                 Sign Up
             </a>
         </div>
-        <?php if (UsersController::getInstance()->isAdminLogged()): ?>
-            <div>
-                <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>cmw-admin"
-                   class="bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded">
-                    Panel Admin
-                </a>
-            </div>
-        <?php else: ?>
-            <div>
-                <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>login"
-                   class="bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded">
-                    Connexion
-                </a>
-            </div>
-        <?php endif; ?>
+        <div>
+            <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>login"
+               class="bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded">
+                Connexion
+            </a>
+        </div>
     </div>
 </nav>
 
