@@ -8,7 +8,7 @@ use CMW\Utils\Website;
 $menus = MenusModel::getInstance();
 ?>
 
-<nav class="bg-gray-300 dark:bg-gray-800 text-gray-800 dark:text-gray-300 p-4 flex justify-between items-center">
+<nav class="bg:transparent text-gray-800 dark:text-gray-300 p-4 flex justify-between items-center">
     <div class="text-lg font-bold">
         <?= Website::getWebsiteName() ?>
     </div>
