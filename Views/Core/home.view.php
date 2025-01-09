@@ -38,9 +38,6 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
         position: relative;
     }
 
-    .hero-section {
-        margin-top: -65px;
-    }
 
     .hero-section .text-content h2 {
         font-size: 2.5rem;
@@ -52,11 +49,11 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
         margin-top: 10px;
     }
 </style>
-<div class="hero-section relative">
+<div class="mt-20 sm:mt-0 hero-section relative">
     <div class="mx-auto shadow-md rounded-lg overflow-hidden relative">
         <img class="w-full object-cover"
              alt="Background"
-             src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/vetements.png' ?>">
+             src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/photo-background.png' ?>">
         <div class="absolute bottom-5 left-5 text-white text-shadow-lg">
             <h2 class="text-2xl font-bold">Mon dressing</h2>
             <p class="text-base mt-2 max-w-40 md:max-w-80 xl:max-w-96">Découvrez mon dressing sous tous ses
@@ -77,16 +74,16 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
     $categories = ['All', 'Destination', 'Culinary', 'Lifestyle', 'Tips & Hacks'];
     ?>
     <a href="#"
-       class="hidden md:block rounded-lg mr-2 bg-gray-100 px-4 py-2 text-black">Cuisine</a>
+       class="hidden md:block rounded mr-2 bg-gray-100 px-4 py-2 text-black">Cuisine</a>
     <?php foreach ($categories as $category) : ?>
         <a href="#"
-           class="hidden md:block rounded-lg mr-2 bg-white px-4 py-2 text-black"><?php echo htmlspecialchars($category); ?></a>
+           class="hidden md:block rounded mr-2 bg-white px-4 py-2 text-black"><?php echo htmlspecialchars($category); ?></a>
     <?php endforeach; ?>
     <div class="flex-col items-center md:flex md:flex-row md:items-center md:ml-auto">
         <div class="flex items-center md:mr-4">
             <span class="md:hidden text-gray-500 mr-2">Catégories :</span>
             <div class="md:hidden flex items-center">
-                <select class="rounded-lg bg-white border-solid border-2 border-gray-300 px-4 py-2 text-black">
+                <select class="rounded bg-white border-solid border border-gray-100 px-2 py-1 text-black">
                     <?php foreach ($categories as $category) : ?>
                         <option><?php echo htmlspecialchars($category); ?></option>
                     <?php endforeach; ?>
@@ -95,10 +92,10 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
         </div>
         <div class="flex items-center mt-3 md:mt-0">
             <span class="text-gray-500 mr-2">Sort by:</span>
-            <select class="rounded-lg bg-white border-solid border-2 border-gray-300 px-4 py-2 text-black">
+            <select class="rounded bg-white border-solid border border-gray-100 px-2 py-1 text-black">
                 <option>Récent</option>
                 <option>Ancien</option>
-                <option>Les plus populaires</option>
+                <option>Populaires</option>
             </select>
         </div>
     </div>
@@ -106,7 +103,7 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
 
 
 
-<div class="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-3">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
     <?php foreach ([1, 2, 3, 4, 5, 6, 7, 8, 9] as $article) : ?>
         <div class="flex gap-0 justify-between sm:gap-4 md:gap-4 mb-5 ">
             <div class="w-[90%] bg-white shadow-md rounded-lg overflow-hidden mx-auto container ">
@@ -116,7 +113,7 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
                      alt="Packing Tips">
                 <div class="p-4">
                 <span
-                    class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded"><?= date('z-M-Y') ?> . 6 minutes read </span>
+                    class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded"><?= date('z-M-Y') ?></span>
                     <h2 class="text-lg font-semibold text-gray-800 mt-2">
                         Mon dressing
                     </h2>
