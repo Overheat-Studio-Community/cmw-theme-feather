@@ -7,7 +7,7 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                'lato': ['lato'],
+                'Lato': ['Lato'],
             },
         },
     },

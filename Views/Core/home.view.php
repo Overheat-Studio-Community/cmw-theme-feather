@@ -8,68 +8,33 @@ Website::setTitle('Accueil');
 Website::setDescription("page d'accueil de CraftMyWebsite");
 ?>
 <style>
-    body {
-        margin: 10px;
-        padding: 0;
-        background-color: white;
-        background-size: cover;
-    }
-
     img {
         max-height: 768px;
-    }
-
-    .bubble {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        background-color: gray;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 20px;
-        font-size: 12px;
-    }
-
-    nav {
-        z-index: 1000;
-    }
-
-    .container {
-        position: relative;
-    }
-
-
-    .hero-section .text-content h2 {
-        font-size: 2.5rem;
-        margin: 0;
-    }
-
-    .hero-section .text-content p {
-        font-size: 1rem;
-        margin-top: 10px;
     }
 </style>
 <div class="mt-20 sm:mt-0 hero-section relative">
     <div class="mx-auto shadow-md rounded-lg overflow-hidden relative">
-        <img class="w-full object-cover"
+        <img class="w-full object-cover aspect-square sm:aspect-auto object-center"
              alt="Background"
              src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/photo-background.png' ?>">
-        <div class="absolute bottom-5 left-5 text-white text-shadow-lg">
-            <h2 class="text-2xl font-bold">Mon dressing</h2>
-            <p class="text-base mt-2 max-w-40 md:max-w-80 xl:max-w-96">Découvrez mon dressing sous tous ses
+        <div class="absolute bottom-5 left-5 text-white text-shadow-lg flex flex-col items-start ">
+            <h2 class="text-2xl font-bold z-[1]">Mon dressing</h2>
+            <p class="leading-4 text-base mt-0 sm:ml- md:max-w-80 xl:max-w-96 sm:mt-2 sm:ml-0 z-[1]">Découvrez mon
+                dressing sous tous ses
                 ensembles</p>
+            <div class="absolute inset-0 bg-black/25 blur-xl"></div>
         </div>
     </div>
 </div>
 
 
-<h2 class="mx-2 mt-6 text-3xl">
+<h2 class="mt-6 text-3xl">
     Blog
 </h2>
-<h3 class="mx-2 text-xl mt-3 text-gray-600">
+<h3 class="text-xl mt-3 text-gray-600">
     Vous trouverez ici les 9 derniers blogs disponibles et mis en ligne.
 </h3>
-<nav class="flex p-4 items-center">
+<nav class="z-30 flex my-2 items-center">
     <?php
     $categories = ['All', 'Destination', 'Culinary', 'Lifestyle', 'Tips & Hacks'];
     ?>
@@ -102,12 +67,13 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
 </nav>
 
 
-
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
     <?php foreach ([1, 2, 3, 4, 5, 6, 7, 8, 9] as $article) : ?>
         <div class="flex gap-0 justify-between sm:gap-4 md:gap-4 mb-5 ">
-            <div class="w-[90%] bg-white shadow-md rounded-lg overflow-hidden mx-auto container ">
-                <div class="bubble">Mode</div>
+            <div class="w-[90%] rounded-lg overflow-hidden mx-auto relative ">
+                <div class="absolute bg-gray-300 opacity-90 text-white text-xs rounded-2xl px-2 py-2 top-2 left-2">
+                    Mode
+                </div>
                 <img class="w-full h-48 object-cover"
                      src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/vetements.png' ?>"
                      alt="Packing Tips">
@@ -121,8 +87,8 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
                         Découvrez mon dressing sous tous ses ensembles
                     </p>
                     <div class="flex items-center mt-4">
-                        <div class="flex-shrink-0 w-10 h-10">
-                            <img class="w-10 h-10 rounded-full"
+                        <div class="flex-shrink-0 w-5 h-5">
+                            <img class="rounded-full"
                                  src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/pp-basic.jpg' ?>"
                                  alt="Author">
                         </div>
@@ -135,4 +101,9 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
             </div>
         </div>
     <?php endforeach; ?>
+
+</div>
+<div>
+    <i class="fa-solid fa-chevron-left"></i>
+    <i class="fa-solid fa-chevron-right"></i>
 </div>

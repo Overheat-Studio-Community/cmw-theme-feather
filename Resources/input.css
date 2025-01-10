@@ -4,7 +4,7 @@
 @layer base {
     @font-face {
         font-family: "Lato", serif;
-        font-weight: 400;
+        font-weight: 600;
         font-style: normal;
         src: url(../Assets/Webfonts/Lato-Regular.ttf);
     }
