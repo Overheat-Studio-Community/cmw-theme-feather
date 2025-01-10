@@ -7,15 +7,12 @@ use CMW\Utils\Website;
 Website::setTitle('Accueil');
 Website::setDescription("page d'accueil de CraftMyWebsite");
 ?>
-<style>
-    img {
-        max-height: 768px;
-    }
-</style>
+<!--  https://fontawesome.com/search?q=twitter&o=r -->
 <div class="mt-20 sm:mt-0 hero-section relative">
     <div class="mx-auto shadow-md rounded-lg overflow-hidden relative">
         <img class="w-full object-cover aspect-square sm:aspect-auto object-center"
              alt="Background"
+             height="768"
              src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/photo-background.png' ?>">
         <div class="absolute bottom-5 left-5 text-white text-shadow-lg flex flex-col items-start ">
             <h2 class="text-2xl font-bold z-[1]">Mon dressing</h2>
@@ -103,7 +100,13 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
     <?php endforeach; ?>
 
 </div>
-<div>
-    <i class="fa-solid fa-chevron-left"></i>
-    <i class="fa-solid fa-chevron-right"></i>
+<div class="flex items-center gap-3 mx-auto my-4">
+    <i class="border rounded px-3 py-1 fa-solid fa-chevron-left"></i>
+        <div class="bg-gray-100 px-3 py-1 rounded">1</div>
+        <p>2</p>
+        <p>3</p>
+        <p>4</p>
+        <p>5</p>
+        <p>6</p>
+    <i class="border rounded px-3 py-1 fa-solid fa-chevron-right"></i>
 </div>

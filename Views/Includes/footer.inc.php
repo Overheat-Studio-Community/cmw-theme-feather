@@ -9,16 +9,15 @@ use CMW\Manager\Env\EnvManager;
 </body>
 
 <footer class="z-50 bg-black rounded mb-2 text-left max-w-full max-h-full">
-    <div class="mx-4 text-white">
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            <div class="grid row-cols-3 flex flex-col gap-2">
+    <div class="mt-4 mx-4 text-white">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="grid row-cols-3 flex flex-col gap-2 col-span-2 md:col-span-1">
                 <div>
-                    <div class="text-2xl">
+                    <div class="font-bold text-2xl">
                         <?= ImagesManager::getFaviconInclude(), Website::getWebsiteName() ?></div>
                     <div class="mt-2 text-sm"><?= Website::getWebsiteDescription() ?></div>
 
                 </div>
-                <div class="flex font-bold items-end mb-4 text-sm"">Copyright © <?= date('Y') ?></div>
             </div>
             <div class="space-y-4">
                 <div class="font-medium">About</div>
@@ -36,7 +35,7 @@ use CMW\Manager\Env\EnvManager;
                     <p>FAQ</p>
                 </div>
             </div>
-            <div class="grid row-cols-4">
+            <div class="grid row-cols-4 col-span-2 md:col-span-1">
                 <div class="font-medium ">Get Updates</div>
                 <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
                 <div
@@ -55,16 +54,15 @@ use CMW\Manager\Env\EnvManager;
             <i class="fa-solid fa-magnifying-glass text-white"></i>
             </span>
                 </div>
-                <div class="flex items-center grid grid-cols-2 sm:grid-cols-5 mt-4 space-x-4">
-                    <div class="ml-4 flex items-center justify-center w-10 h-10 rounded-full bg-white opacity-50">
+                <div class="flex justify-items-center justify-between gap-2 sm:grid-cols-5 mt-4">
+                    <div class="flex  items-center justify-center w-10 h-10 rounded-full bg-white opacity-50">
                         <img class="rounded-full w-6 h-6 filter grayscale"
                              src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/X_logo_2023.svg.webp' ?>"
                              alt="Twitter">
                     </div>
-                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-white opacity-50">
-                        <img class="rounded-full w-6 h-6 filter grayscale"
-                             src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/ig-icon-template.webp' ?>"
-                             alt="Instagram">
+                    <div class="items-center justify-center w-10 h-10 rounded-full bg-white opacity-50">
+                        <!---->
+                        <i class="fa-brands fa-instagram size-6 text-black"></i>
                     </div>
 
                     <div class="flex items-center justify-center w-10 h-10 rounded-full bg-white opacity-50">
@@ -83,11 +81,16 @@ use CMW\Manager\Env\EnvManager;
                              alt="TikTok">
                     </div>
                 </div>
-                <div class="flex items-center justify-end font-medium my-4 gap-5">
-                    <p>Privacy Policy</p>
-                    <p>Terms of Service</p>
-                </div>
 
+
+            </div>
+        </div>
+        <div class="flex sm:flex-row flex-col-reverse justify-between items-center my-4">
+            <div class="sm:flex font-semibold items-end text-sm">
+                Copyright © <?= date('Y') ?></div>
+            <div class="flex items-center justify-end font-medium gap-5">
+                <p>Privacy Policy</p>
+                <p>Terms of Service</p>
             </div>
         </div>
     </div>
