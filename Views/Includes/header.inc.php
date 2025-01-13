@@ -1,14 +1,16 @@
 <?php
 
 use CMW\Controller\Users\UsersController;
+use CMW\Controller\Users\UsersSessionsController;
 use CMW\Manager\Env\EnvManager;
 use CMW\Model\Core\MenusModel;
 use CMW\Utils\Website;
 
 $menus = MenusModel::getInstance();
 ?>
-
-<nav class="z-50 bg:transparent text-white dark:text-gray-300 absolute w-full top-0 left-0">
+<!-- <i class="fa-solid fa-gear"></i> -->
+<!--  -->
+<nav class="z-50 text-white absolute w-full top-0 left-0">
     <div class="absolute inset-0 bg-black/25 blur-xl"></div>
     <div class="flex justify-between items-center mt-3 mx-4 relative">
         <div class="text-lg text-black sm:text-white font-bold">
@@ -18,9 +20,7 @@ $menus = MenusModel::getInstance();
         <ul class="hidden lg:flex space-x-4">
             <?php foreach ($menus->getMenus() as $menus): ?>
                 <?php if ($menus->isUserAllowed()): ?>
-                    <li <?php if ($menus->urlIsActive()) {
-                        echo 'text-blue-500';
-                    } ?>>
+                    <li>
                         <a href="<?= $menus->getUrl() ?>" <?= !$menus->isTargetBlank() ?: "target='_blank'" ?>
                            class="hover:text-gray-300"><?= $menus->getName() ?></a>
                     </li>
@@ -45,22 +45,58 @@ $menus = MenusModel::getInstance();
             <i class="fa-solid fa-magnifying-glass text-white"></i>
             </span>
         </div>
-
         <div class="hidden lg:flex flex items-center gap-4">
-            <div>
-                <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>cmw-admin"
-                   class="bg-white hover:bg-white text-blue-500 py-2 px-4 rounded">
-                    Sign Up
-                </a>
-            </div>
-            <div>
-                <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>login"
-                   class="bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded">
-                    Connexion
-                </a>
-            </div>
+            <?php if (UsersController::isAdminLogged()) : ?>
+                <div>
+                    <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>cmw-admin"
+                       class="gap-2 select-none inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background 2 disabled:pointer-events-none  h-10 mt-2 text-black rounded-lg transition-all px-3 py-2 w-full text-center bg-amber-50/10 hover:bg-amber-50/20">
+                        <i class="fa-solid fa-screwdriver-wrench"> </i>
+                        Administration
+                    </a>
+                </div>
+            <?php endif; ?>
+            <?php if (!UsersController::isUserLogged()): ?>
+                <div>
+                    <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>register"
+                       class="bg-white hover:bg-white text-blue-500 py-2 px-4 rounded">
+                        Sign Up
+                    </a>
+                </div>
+                <div>
+                    <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>login"
+                       class="bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded">
+                        Connexion
+                    </a>
+                </div>
+            <?php endif; ?>
+            <?php if (UsersController::isUserLogged()):
+                echo(UsersSessionsController::getInstance()->getCurrentUser()->getPseudo());
+                ?>
+                <img class="w-8 h-8 rounded-full"
+                     src="<?= UsersSessionsController::getInstance()->getCurrentUser()?->getUserPicture()?->getImage() ?>"
+            <?php endif; ?>
         </div>
+        <?php if (UsersController::isUserLogged()): ?>
+            <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>profile"
+               class="gap-2 select-none inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 mt-2 text-amber-50 hover:text-amber-200 rounded-lg transition-all px-3 py-2 w-full text-center bg-amber-50/10 hover:bg-amber-50/20">
+                <i class="fa-regular fa-address-card"></i>
+                Profile
+            </a>
+            <div
+                class="gap-2 items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 mt-2 rounded-lg transition-all px-3 py-2 w-full text-center bg-amber-50/10">
+                <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>logout"
+                   class="bg-transparent text-black rounded align-center items-center">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Déconnexion
+                </a>
+            </div>
+        <?php endif; ?>
+
+        <?php if (UsersController::isUserLogged()): ?>
+    </div>
+    <?php endif ?>
         <div class="z-50 flex lg:hidden flex-col justify-center">
+
             <div>
                 <nav x-data="{ open: false }">
                     <!-- Bouton burger -->
@@ -88,43 +124,71 @@ $menus = MenusModel::getInstance();
                             x-transition:leave="transition transform ease-in duration-300"
                             x-transition:leave-start="translate-y-0 opacity-100"
                             x-transition:leave-end="-translate-y-full opacity-0"
-                            class="w-full sm:flex-row sm:max-w-[16rem] sm:ml-auto flex-col space-y-4 bg-gray-300 p-4 shadow-lg rounded right-0">
-                            <li>
-                                <a href="#"
-                                   class="w-full select-none inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 mt-2 text-amber-50 hover:text-amber-200 rounded-lg transition-all px-3 py-2 w-full text-center bg-amber-50/10 hover:bg-amber-50/20">
-                                    Home
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#"
-                                   class="select-none inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 mt-2 text-amber-50 hover:text-amber-200 rounded-lg transition-all px-3 py-2 w-full text-center bg-amber-50/10 hover:bg-amber-50/20">
-                                    About
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#"
-                                   class="select-none inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 mt-2 text-amber-50 hover:text-amber-200 rounded-lg transition-all px-3 py-2 w-full text-center bg-amber-50/10 hover:bg-amber-50/20">
-                                    Services
-                                </a>
-                            </li>
-                            <li>
-                                <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>cmw-admin"
-                                   class="select-none inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 mt-2 text-blue-500 hover:text-blue-700 rounded-lg transition-all px-3 py-2 w-full text-center bg-white hover:bg-white">
-                                    Sign Up
-                                </a>
-                            </li>
-                            <li>
-                                <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>login"
-                                   class="select-none inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 mt-2 text-white hover:text-white rounded-lg transition-all px-3 py-2 w-full text-center bg-blue-500 hover:bg-blue-600">
-                                    Connexion
-                                </a>
-                            </li>
-                        </ul>
+                            class="w-full sm:flex-row sm:max-w-[16rem] sm:ml-auto flex-col space-y-4 bg-white p-4 shadow-lg rounded right-0">
+                            <div class="justify-center justify-content-center gap-2 text-black">
+                                <a href="<?= $menus->getUrl() ?>" <?= !$menus->isTargetBlank() ?: "target='_blank'" ?>
+                                   class="hover:text-gray-300"><?= $menus->getName() ?></a>
+                            </div>
+                            <!--
+                            <div class="justify-center justify-content-center gap-2">
+                                <div class="flex items-center justify-center gap-2 text-black">
+                                    <?php if (UsersController::isUserLogged()):
+                                        echo(UsersSessionsController::getInstance()->getCurrentUser()->getPseudo());
+                                        ?>
+                                        <img class="w-8 h-8 gap-3 rounded-full"
+                                             src="<?= UsersSessionsController::getInstance()->getCurrentUser()?->getUserPicture()?->getImage() ?>"
+                                    <?php endif ?>
+                                </div>
+                            </div>
+                            <?php if (UsersController::isAdminLogged()) : ?>
+                                <li>
 
+                                    <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>cmw-admin"
+                                       class="gap-2 select-none inline-flex items-center whitespace-nowrap text-sm font-medium ring-offset-background 2 disabled:pointer-events-none  h-10 mt-2 text-black rounded-lg transition-all px-3 py-2 w-full bg-amber-50/10 hover:bg-amber-50/20">
+                                        <i class="fa-solid fa-screwdriver-wrench"> </i>
+                                        Administration
+                                    </a>
+                                </li>
+                            <?php endif; ?>
+                            <?php if (UsersController::isUserLogged()): ?>
+                                <li>
+                                    <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>profile"
+                                       class="gap-2 select-none inline-flex items-center whitespace-nowrap text-sm font-medium ring-offset-background 2 disabled:pointer-events-none  h-10 mt-2 text-black rounded-lg transition-all px-3 py-2 w-full bg-amber-50/10 hover:bg-amber-50/20">
+                                        <i class="fa-regular fa-address-card"></i>
+                                        Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>logout"
+                                       class="gap-2 select-none inline-flex items-center whitespace-nowrap text-sm font-medium ring-offset-background 2 disabled:pointer-events-none  h-10 mt-2 text-black rounded-lg transition-all px-3 py-2 w-full bg-amber-50/10 hover:bg-amber-50/20">
+                                            <i class="fa-solid fa-right-from-bracket"></i>
+                                            Déconnexion
+                                        </a>
+                                    </div>
+                                </li>
+                            <?php endif; ?>
+                            <?php if (!UsersController::isUserLogged()): ?>
+                                <li>
+                                    <div>
+                                        <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>register"
+                                           class="bg-white hover:bg-white text-blue-500 py-2 px-4 rounded">
+                                            Sign Up
+                                        </a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div>
+                                        <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>login"
+                                           class="bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded">
+                                            Connexion
+                                        </a>
+                                    </div>
+                                </li>
+                            <?php endif; ?>
+                            -->
+                        </ul>
                     </div>
                 </nav>
             </div>
         </div>
-
-    </div>
 </nav>
