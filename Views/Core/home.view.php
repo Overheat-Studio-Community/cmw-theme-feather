@@ -100,13 +100,16 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
     <?php endforeach; ?>
 
 </div>
-<div class="flex items-center gap-3 mx-auto my-4">
-    <i class="border rounded px-3 py-1 fa-solid fa-chevron-left"></i>
-        <div class="bg-gray-100 px-3 py-1 rounded">1</div>
-        <p>2</p>
-        <p>3</p>
-        <p>4</p>
-        <p>5</p>
-        <p>6</p>
-    <i class="border rounded px-3 py-1 fa-solid fa-chevron-right"></i>
+<div class="flex items-center gap-5 mx-auto my-4 font-medium">
+    <i class="border rounded px-3 py-2 fa-solid fa-chevron-left"></i>
+    <div class="flex items-center gap-5">
+        <div class="bg-gray-100 px-3 py-1 rounded w-8 text-center">1</div>
+        <p class="w-8 text-center">2</p>
+        <p class="w-8 text-center">3</p>
+        <div class="hidden gap-5 items-center sm:flex">
+            <p class="w-8 text-center">4</p>
+            <p class="w-8 text-center">5</p>
+        </div>
+    </div>
+    <i class="border rounded px-3 py-2 fa-solid fa-chevron-right"></i>
 </div>

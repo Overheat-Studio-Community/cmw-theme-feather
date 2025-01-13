@@ -8,77 +8,60 @@ use CMW\Manager\Env\EnvManager;
 ?>
 </body>
 
-<footer class="z-50 bg-black rounded mb-2 text-left max-w-full max-h-full">
+<footer class="bg-black rounded mb-2 text-left max-w-full max-h-full">
     <div class="mt-4 mx-4 text-white">
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             <div class="grid row-cols-3 flex flex-col gap-2 col-span-2 md:col-span-1">
                 <div>
                     <div class="font-bold text-2xl">
                         <?= ImagesManager::getFaviconInclude(), Website::getWebsiteName() ?></div>
-                    <div class="mt-2 text-sm"><?= Website::getWebsiteDescription() ?></div>
+                    <div class="mt-2 text-sm text-[#afafaf]"><?= Website::getWebsiteDescription() ?></div>
 
                 </div>
             </div>
-            <div class="space-y-4">
+            <div class="space-y-2">
                 <div class="font-medium">About</div>
-                <div class="bg-transparent text-white opacity-75 space-y-4">
+                <div class="text-sectionGray space-y-2">
                     <p>About Us</p>
                     <p>Blog</p>
                     <p>Career</p>
                 </div>
             </div>
-            <div class="space-y-4">
+            <div class="space-y-2">
                 <div class="font-medium">Support</div>
-                <div class="bg-transparent text-white opacity-75 space-y-4">
+                <div class="text-sectionGray space-y-2">
                     <p>Contact Us</p>
                     <p>Return</p>
                     <p>FAQ</p>
                 </div>
             </div>
-            <div class="grid row-cols-4 col-span-2 md:col-span-1">
+            <div class="grid row-cols-4 col-span-2 md:col-span-1 lg:grid-cols-subgrid lg:col-start-2 xl:col-span-1">
                 <div class="font-medium ">Get Updates</div>
-                <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
-                <div
-                    class="backdrop-blur-sm flex items-center rounded-lg overflow-hidden mt-4"
-                    style="background-color: rgba(211,199,188,0.15);">
-                    <input
-                        type="search"
-                        class="flex-grow px-4 py-2 bg-transparent opacity-75 text-white focus:outline-none"
-                        placeholder="Enter your email"
-                        aria-label="Search"
-                        id="exampleFormControlInput2"
-                        aria-describedby="button-addon2"
-                    />
-                    <span class="flex items-center justify-center px-4 bg-transparent"
-                          id="button-addon2">
-            <i class="fa-solid fa-magnifying-glass text-white"></i>
-            </span>
-                </div>
-                <div class="flex justify-items-center justify-between gap-2 sm:grid-cols-5 mt-4">
-                    <div class="flex  items-center justify-center w-10 h-10 rounded-full bg-white opacity-50">
-                        <img class="rounded-full w-6 h-6 filter grayscale"
-                             src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/X_logo_2023.svg.webp' ?>"
-                             alt="Twitter">
-                    </div>
-                    <div class="items-center justify-center w-10 h-10 rounded-full bg-white opacity-50">
-                        <!---->
-                        <i class="fa-brands fa-instagram size-6 text-black"></i>
+                <div class="w-[90%] justify-center items-center">
+                    <div class="w-full backdrop-blur-sm flex items-center rounded-lg overflow-hidden mt-4 bg-customGray border border-[#3d3d3d]">
+                        <input
+                            type="search"
+                            class="flex-grow py-2 bg-transparent opacity-75 text-white focus:outline-none"
+                            placeholder="    Enter your email"/>
+                        <button class="rounded bg-white text-black text-sm px-3 py-2 font-semibold mr-1">Subscribe</button>
                     </div>
 
-                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-white opacity-50">
-                        <img class="rounded-full w-6 h-6 filter grayscale"
-                             src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/2023_Facebook_icon.svg.webp' ?>"
-                             alt="Facebook">
-                    </div>
-                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-white opacity-50">
-                        <img class="rounded-full w-6 h-6 filter grayscale"
-                             src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/Discord_Logo_sans_texte.svg.png' ?>"
-                             alt="Discord">
-                    </div>
-                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-white opacity-50">
-                        <img class="rounded-full w-6 h-6 filter grayscale"
-                             src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/tiktok.png' ?>"
-                             alt="TikTok">
+                    <div class="flex justify-items-center justify-between gap-1 sm:grid-cols-5 mt-4">
+                        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-customGray">
+                            <i class="fa-brands fa-instagram"></i>
+                        </div>
+                        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-customGray">
+                            <i class="fa-brands fa-twitter"></i>
+                        </div>
+                        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-customGray">
+                            <i class="fa-brands fa-facebook"></i>
+                        </div>
+                        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-customGray">
+                            <i class="fa-brands fa-discord"></i>
+                        </div>
+                        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-customGray">
+                            <i class="fa-brands fa-tiktok"></i>
+                        </div>
                     </div>
                 </div>
 
@@ -86,9 +69,10 @@ use CMW\Manager\Env\EnvManager;
             </div>
         </div>
         <div class="flex sm:flex-row flex-col-reverse justify-between items-center my-4">
-            <div class="sm:flex font-semibold items-end text-sm">
-                Copyright © <?= date('Y') ?></div>
-            <div class="flex items-center justify-end font-medium gap-5">
+            <div class="sm:flex font-medium items-end text-sm">
+                ©<?= date('Y'), " ", Website::getWebsiteName() ?>. All rights reserved.
+            </div>
+            <div class="flex items-center justify-end font-medium gap-5 text-sectionGray">
                 <p>Privacy Policy</p>
                 <p>Terms of Service</p>
             </div>

@@ -9,7 +9,12 @@ module.exports = {
             fontFamily: {
                 'Lato': ['Lato'],
             },
+            colors: {
+                customGray: '#333333',
+                sectionGray: '#878787'
+            },
         },
     },
     plugins: [],
+
 }
