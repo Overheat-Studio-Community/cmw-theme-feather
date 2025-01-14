@@ -6,7 +6,10 @@ use CMW\Manager\Env\EnvManager;
 use CMW\Model\Core\MenusModel;
 use CMW\Utils\Website;
 
+$userinstance = UsersSessionsController::getInstance()->getCurrentUser();
 $menus = MenusModel::getInstance();
+$subfolder = EnvManager::getInstance()->getValue('PATH_SUBFOLDER');
+$userlog = UsersController::isUserLogged()
 ?>
 
 <nav class="z-50 text-white absolute w-full top-0 left-0">
@@ -52,14 +55,14 @@ $menus = MenusModel::getInstance();
         </div>
 
         <!-- Profile -->
-        <?php if (UsersController::isUserLogged()): ?>
+        <?php if ($userlog): ?>
             <div class="flex flex-col gap-4 relative">
                 <div class="flex items-center gap-2 cursor-pointer" id="profile-toggle">
                     <span class="text-white hidden sm:flex" id="navbar-elements">
-                        <?= UsersSessionsController::getInstance()->getCurrentUser()->getPseudo(); ?>
+                        <?= $userinstance->getCurrentUser()->getPseudo(); ?>
                     </span>
                     <img id="navbar-elements" class="w-8 h-8 rounded-full"
-                         src="<?= UsersSessionsController::getInstance()->getCurrentUser()?->getUserPicture()?->getImage(); ?>"
+                         src="<?= $userinstance?->getUserPicture()?->getImage(); ?>"
                          alt="User Profile">
                 </div>
             </div>
@@ -68,15 +71,15 @@ $menus = MenusModel::getInstance();
                 <div id="profile-menu"
                      class="z-50 hidden flex w-full sm:max-w-[16rem] sm:ml-auto flex-col bg-white shadow-lg rounded mt-20 right-0
                      transition duration-300 ease-in-out transform scale-95 opacity-0">
-                    <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>profile"
+                    <a href="<?= $subfolder ?>profile"
                        class="block px-4 py-2 text-black hover:bg-gray-100">
                         <i class="fa-regular fa-address-card"></i> Profile
                     </a>
-                    <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>cmw-admin"
+                    <a href="<?= $subfolder ?>cmw-admin"
                        class="block px-4 py-2 text-black hover:bg-gray-100">
                         <i class="fa-solid fa-screwdriver-wrench"></i> Administration
                     </a>
-                    <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>logout"
+                    <a href="<?= $subfolder ?>logout"
                        class="block px-4 py-2 text-newred hover:bg-gray-100">
                         <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
                     </a>
@@ -84,11 +87,11 @@ $menus = MenusModel::getInstance();
             </div>
         <?php else: ?>
             <div class="hidden md:flex gap-2">
-                <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>register"
+                <a href="<?= $subfolder ?>register"
                    class="bg-white hover:bg-white text-blue-500 py-2 px-4 rounded">
                     Sign Up
                 </a>
-                <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>login"
+                <a href="<?= $subfolder ?>login"
                    class="bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded">
                     Connexion
                 </a>
@@ -109,13 +112,13 @@ $menus = MenusModel::getInstance();
                             <div class="justify-center justify-content-center gap-2 text-black">
                                 <a href="<?= $menu->getUrl() ?>" <?= !$menu->isTargetBlank() ?: "target='_blank'" ?>
                                    class="hover:text-gray-300"><?= $menu->getName() ?></a>
-                                <?php if (!UsersController::isUserLogged()): ?>
+                                <?php if (!$userlog): ?>
                                     <div class="flex mt-4 gap-2 md:hidden">
-                                        <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>register"
+                                        <a href="<?= $subfolder ?>register"
                                            class="bg-white/50 text-blue-500 py-2 px-4 rounded">
                                             Sign Up
                                         </a>
-                                        <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>login"
+                                        <a href="<?= $subfolder ?>login"
                                            class="bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded">
                                             Connexion
                                         </a>
