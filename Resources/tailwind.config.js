@@ -11,7 +11,10 @@ module.exports = {
             },
             colors: {
                 customGray: '#333333',
-                sectionGray: '#878787'
+                sectionGray: '#878787',
+                newred: '#FF6961',
+                custombg: '#D3C7BC'
+
             },
         },
     },

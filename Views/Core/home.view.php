@@ -7,7 +7,6 @@ use CMW\Utils\Website;
 Website::setTitle('Accueil');
 Website::setDescription("page d'accueil de CraftMyWebsite");
 ?>
-<!--  https://fontawesome.com/search?q=twitter&o=r -->
 <div class="mt-20 sm:mt-0 hero-section relative">
     <div class="mx-auto shadow-md rounded-lg overflow-hidden relative">
         <img class="w-full object-cover aspect-square sm:aspect-auto object-center"
