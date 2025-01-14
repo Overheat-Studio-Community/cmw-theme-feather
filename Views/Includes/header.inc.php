@@ -6,6 +6,7 @@ use CMW\Manager\Env\EnvManager;
 use CMW\Model\Core\MenusModel;
 use CMW\Utils\Website;
 
+
 $subfolder = EnvManager::getInstance()->getValue('PATH_SUBFOLDER');
 $usersession =UsersSessionsController::getInstance()->getCurrentUser();
 $userlog = UsersController::isUserLogged();
