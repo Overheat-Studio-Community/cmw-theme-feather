@@ -16,7 +16,7 @@ Website::setDescription('Inscrivez-vous sur le site ' . Website::getWebsiteName(
 
 <form action="" method="post">
     <?php SecurityManager::getInstance()->insertHiddenToken() ?>
-    <div>
+    <div class="mt-20">
         <input id="register_email" name="register_email" type="email"
                placeholder="<?= LangManager::translate('users.users.mail') ?>">
         <label for="register_email">E-Mail</label>
