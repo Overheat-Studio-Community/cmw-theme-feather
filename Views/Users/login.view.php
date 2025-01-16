@@ -14,21 +14,38 @@ Website::setTitle('Connexion');
 Website::setDescription('Connectez-vous à votre compte ' . Website::getWebsiteName());
 ?>
 <style>
-    /* Appliquer le border-radius uniquement à la checkbox */
+    /* Appliquer le style personnalisé à la checkbox */
     #login_keep_connect {
-        border-radius: 0.375rem;;
-        width: 16px; /* Ajustez la taille si nécessaire */
+        border-radius: 0.375rem;
+        width: 16px;
         height: 16px;
         appearance: none; /* Supprime le style par défaut */
+        -webkit-appearance: none; /* Compatibilité avec Webkit */
         background-color: #fff; /* Couleur de fond */
         border: 1px solid #000000; /* Bordure personnalisée */
         cursor: pointer;
+        display: inline-block;
+        position: relative;
     }
 
     /* Style pour l'état coché */
     #login_keep_connect:checked {
-        background-color: #000000; /* Couleur de fond lorsqu'elle est cochée */
+        background-color: #b5b5b5; /* Couleur de fond lorsqu'elle est cochée */
         border-color: #000000;
+    }
+
+    /* Ajouter la flèche de validation pour l'état coché */
+    #login_keep_connect:checked::after {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 2px;
+        left: 5px;
+        width: 4px;
+        height: 8px;
+        border: solid #000000;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
     }
 
     /* Optionnel : Ajouter un effet au survol */
@@ -36,17 +53,18 @@ Website::setDescription('Connectez-vous à votre compte ' . Website::getWebsiteN
         border-color: #000000;
     }
 </style>
+
 <div class="mt-20 mb-2 grid grid-cols-1 lg:grid-cols-2 gap-4">
     <!-- Colonne 1 : Image -->
-    <div class="hidden lg:block max-h-full relative">
-        <img class="w-full rounded object-cover aspect-square lg:aspect-auto h-full"
+    <div class="hidden lg:flex max-h-full relative justify-center">
+        <img class="flex justify-center w-[90%] rounded object-cover aspect-square lg:aspect-auto h-full "
              alt="Background"
              src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/photo-background.png' ?>">
-        <div class="absolute bottom-5 left-5 text-white text-shadow-lg flex flex-col items-start z-10">
+        <div class="absolute bottom-5 left-16 text-white text-shadow-lg flex flex-col items-start z-10">
             <h2 class="text-2xl font-bold">Mon dressing</h2>
             <p class="leading-4 text-base mt-2 max-w-md">Découvrez mon dressing sous tous ses ensembles</p>
         </div>
-        <div class="absolute inset-0 bg-black/25"></div>
+        <div class="absolute inset-0"></div>
     </div>
 
     <!-- Colonne 2 : Formulaire -->
@@ -101,15 +119,38 @@ Website::setDescription('Connectez-vous à votre compte ' . Website::getWebsiteN
                     </div>
                 </div>
 
-                <?php foreach ($oAuths as $oAuth): ?>
-                    <div>
-                        <a href="oauth/<?= $oAuth->methodIdentifier() ?>"
-                           aria-label="<?= $oAuth->methodeName() ?>">
-                            <img src="<?= $oAuth->methodeIconLink() ?>"
-                                 alt="<?= $oAuth->methodeName() ?>" width="32" height="32"/>
-                        </a>
+                <?php if (count($oAuths) >= 3) : ?>
+                    <div class="flex justify-center">Sign up with :</div>
+                    <div class="flex flex-wrap gap-2 mt-2 justify-center text-xs">
+                        <?php foreach ($oAuths as $oAuth): ?>
+                            <div class="min-w-20 flex flex-col items-center text-gray-400 hover:text-black">
+                                <a href="oauth/<?= $oAuth->methodIdentifier() ?>"
+                                   aria-label="<?= $oAuth->methodeName() ?>">
+                                    <img src="<?= $oAuth->methodeIconLink() ?>"
+                                         alt="<?= $oAuth->methodeName() ?>" class="w-10 h-10"/>
+                                </a>
+                                <?= $oAuth->methodeName() ?>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
-                <?php endforeach; ?>
+
+                <?php else : ?>
+                    <div class="flex flex-col my-1">
+                        <?php foreach ($oAuths
+
+                                       as $oAuth): ?>
+                            <div class="flex my-1 rounded border border-gray-100 justify-center items-center gap-2">
+                                <a href="oauth/<?= $oAuth->methodIdentifier() ?>"
+                                   aria-label="<?= $oAuth->methodeName() ?>">
+                                    <img src="<?= $oAuth->methodeIconLink() ?>"
+                                         alt="<?= $oAuth->methodeName() ?>" width="32" height="32"/>
+                                </a>
+                                Sign up with <?= $oAuth->methodeName() ?>
+                            </div>
+
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
                 <?php SecurityController::getPublicData(); ?>
                 <button
                     class="flex items-center justify-center bg-black text-white rounded-lg py-2 mx-auto w-full"

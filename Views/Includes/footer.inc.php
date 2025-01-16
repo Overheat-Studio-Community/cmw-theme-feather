@@ -8,7 +8,7 @@ use CMW\Manager\Env\EnvManager;
 ?>
 </body>
 
-<footer class="bg-black rounded-xl mb-2 text-left max-w-full max-h-full">
+<footer class="mt-20 bg-black rounded-xl mb-2 text-left max-w-full max-h-full">
     <div class="mt-4 mx-4 text-white">
         <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             <div class="grid row-cols-3 flex flex-col gap-2 col-span-2 md:col-span-1">
