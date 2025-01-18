@@ -8,40 +8,97 @@ use CMW\Utils\Website;
 
 Website::setTitle('News');
 Website::setDescription('Consultez les dernières actualités');
-?>
-<section style="width: 70%;padding-bottom: 6rem;margin: 1rem auto auto;">
-
-    <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-        <div style="flex: 0 0 32%; border: solid 1px #b4aaaa; border-radius: 5px; padding: 9px;">
-
-            <?php foreach ($newsList as $news): ?>
-                <div style="display: flex; justify-content: center">
-                    <img style="width: 50%;" src="<?= $news->getImageLink() ?>" alt="..."/>
-                </div>
-                <div style="display: flex; justify-content: space-between">
-                    <span><?= $news->getAuthor()->getPseudo() ?></span>
-                    <span><?= $news->getDateCreated() ?></span>
-                </div>
-                <h3>
-                    <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>news/<?= $news->getSlug() ?>"><?= $news->getTitle() ?></a>
-                </h3>
-                <p><?= $news->getDescription() ?></p>
-                <div style="display: flex; justify-content: space-between">
-                    <div class="cursor-pointer">
-                        <?php if ($news->isLikesStatus()): ?>
-                            <span><?= $news->getLikes()->getTotal() ?>
-                                <?php if ($news->getLikes()->userCanLike()): ?>
-                                    <a href="#">Likes</a>
-                                <?php else: ?>
-                                    <a href="<?= $news->getLikes()->getSendLike() ?>">Liker</a>
-                                <?php endif; ?>
-                                </span>
-                        <?php endif; ?>
-                    </div>
-                    <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>news/<?= $news->getSlug() ?>">Lire
-                        la suite</a>
-                </div>
-            <?php endforeach; ?>
+?><h2 class="mt-6 text-3xl">
+    Blog
+</h2>
+<h3 class="text-xl mt-3 text-gray-600">
+    Vous trouverez ici les 9 derniers blogs disponibles et mis en ligne.
+</h3>
+<nav class="z-30 flex my-2 items-center">
+    <?php
+    $categories = ['All', 'Destination', 'Culinary', 'Lifestyle', 'Tips & Hacks'];
+    ?>
+    <a href="#"
+       class="hidden md:block rounded mr-2 bg-gray-100 px-4 py-2 text-black">Cuisine</a>
+    <?php foreach ($categories as $category) : ?>
+        <a href="#"
+           class="hidden md:block rounded mr-2 bg-white px-4 py-2 text-black"><?php echo htmlspecialchars($category); ?></a>
+    <?php endforeach; ?>
+    <div class="flex-col items-center md:flex md:flex-row md:items-center md:ml-auto">
+        <div class="flex items-center md:mr-4">
+            <span class="md:hidden text-gray-500 mr-2">Catégories :</span>
+            <div class="md:hidden flex items-center">
+                <select class="rounded bg-white border-solid border border-gray-100 px-2 py-1 text-black">
+                    <?php foreach ($categories as $category) : ?>
+                        <option><?php echo htmlspecialchars($category); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+        <div class="flex items-center mt-3 md:mt-0">
+            <span class="text-gray-500 mr-2">Sort by:</span>
+            <select class="rounded bg-white border-solid border border-gray-100 px-2 py-1 text-black">
+                <option>Récent</option>
+                <option>Ancien</option>
+                <option>Populaires</option>
+            </select>
         </div>
     </div>
-</section>
+</nav>
+
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
+    <?php foreach ([1, 2, 3, 4, 5, 6, 7, 8, 9] as $article) : ?>
+        <div class="flex gap-0 justify-between sm:gap-4 md:gap-4 mb-5 ">
+            <div class="w-[90%] rounded-lg overflow-hidden mx-auto relative ">
+                <?php foreach ($newsList as $news): ?>
+                    <h3 class="text-center"><a
+                            href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>news/<?= $news->getSlug() ?>"><?= $news->getTitle() ?></a>
+                    </h3>
+
+                <?php endforeach; ?>
+                <div class="absolute bg-gray-300 opacity-90 text-white text-xs rounded-2xl px-2 py-2 top-2 left-2">
+                    Mode
+                </div>
+                <img class="w-full h-48 object-cover"
+                     src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/vetements.png' ?>"
+                     alt="Packing Tips">
+                <div class="p-4">
+                <span
+                    class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded"><?= date('z-M-Y') ?></span>
+                    <h2 class="text-lg font-semibold text-gray-800 mt-2">
+                        Mon dressing
+                    </h2>
+                    <p class="text-sm text-gray-600 mt-2">
+                        Découvrez mon dressing sous tous ses ensembles
+                    </p>
+                    <div class="flex items-center mt-4">
+                        <div class="flex-shrink-0 w-5 h-5">
+                            <img class="rounded-full"
+                                 src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/pp-basic.jpg' ?>"
+                                 alt="Author">
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-800 ">Some1</p>
+                            <p class="text-sm text-gray-500"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endforeach; ?>
+
+</div>
+<div class="flex items-center gap-5 mx-auto my-4 font-medium">
+    <i class="border rounded px-3 py-2 fa-solid fa-chevron-left"></i>
+    <div class="flex items-center gap-5">
+        <div class="bg-gray-100 px-3 py-1 rounded w-8 text-center">1</div>
+        <p class="w-8 text-center">2</p>
+        <p class="w-8 text-center">3</p>
+        <div class="hidden gap-5 items-center sm:flex">
+            <p class="w-8 text-center">4</p>
+            <p class="w-8 text-center">5</p>
+        </div>
+    </div>
+    <i class="border rounded px-3 py-2 fa-solid fa-chevron-right"></i>
+</div>
