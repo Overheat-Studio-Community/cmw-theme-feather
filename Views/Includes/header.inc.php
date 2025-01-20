@@ -77,10 +77,12 @@ $menus = MenusModel::getInstance();
                        class="block px-4 py-2 text-black hover:bg-gray-100">
                         <i class="fa-regular fa-address-card"></i> Profile
                     </a>
+                    <?php if (UsersController::isAdminLogged()) : ?>
                     <a href="<?= $subfolder ?>cmw-admin"
                        class="block px-4 py-2 text-black hover:bg-gray-100">
                         <i class="fa-solid fa-screwdriver-wrench"></i> Administration
                     </a>
+                    <?php endif; ?>
                     <a href="<?= $subfolder ?>logout"
                        class="block px-4 py-2 text-newred hover:bg-gray-100">
                         <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
