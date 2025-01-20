@@ -3,6 +3,8 @@
 use CMW\Controller\Users\UsersSessionsController;
 use CMW\Manager\Env\EnvManager;
 use CMW\Utils\Website;
+use CMW\Model\News\NewsTagsModel;
+
 
 Website::setTitle('Accueil');
 Website::setDescription("page d'accueil de CraftMyWebsite");
@@ -14,7 +16,7 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
              height="768"
              src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/photo-background.png' ?>">
         <div class="absolute bottom-5 left-5 text-white text-shadow-lg flex flex-col items-start ">
-            <h2 class="text-2xl font-bold z-[1]">Mon dressing</h2>
+            <h2 class="text-2xl font-bold z-[1]"> </h2>
             <p class="leading-4 text-base mt-0 sm:ml- md:max-w-80 xl:max-w-96 sm:mt-2 sm:ml-0 z-[1]">Découvrez mon
                 dressing sous tous ses
                 ensembles</p>

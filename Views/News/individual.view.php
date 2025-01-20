@@ -14,14 +14,14 @@ Website::setDescription($news->getDescription());
 ?>
 <section style="width: 70%;padding-bottom: 6rem;margin: 1rem auto auto;">
 
-    <h1 style="text-align: center"><?= $news->getTitle() ?></h1>
+    <h1 class="text-center"><?= $news->getTitle() ?></h1>
     <p><?= $news->getDescription() ?></p>
 
     <section>
         <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
             <div
                 style="flex: 0 0 20%; text-align: center; border: 1px solid #b4aaaa; border-radius: 5px; height: fit-content">
-                <img src="<?= $news->getImageLink() ?>" height="90%" width="90%" alt="...">
+                <img src="<?= $news->getImageLink() ?>" height="100%" width="100%" alt="...">
                 <div>
                     <?= $news->getAuthor()->getPseudo() ?>
                 </div>
