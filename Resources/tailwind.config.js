@@ -7,9 +7,17 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                'lato': ['lato'],
+                'Lato': ['Lato'],
+            },
+            colors: {
+                customGray: '#333333',
+                sectionGray: '#878787',
+                newred: '#FF6961',
+                custombg: '#D3C7BC'
+
             },
         },
     },
     plugins: [],
+
 }

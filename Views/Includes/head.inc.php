@@ -47,7 +47,7 @@ $siteName = Website::getWebsiteName();
 
     <?php View::loadInclude($includes, 'styles'); ?>
 </head>
-<body class="bg-main text-color font-lato flex flex-col min-h-screen">
+<body class="bg-main text-color font-lato flex flex-col min-h-screen mx-2 mt-2">
 
 <?php
 View::loadInclude($includes, 'beforeScript');
