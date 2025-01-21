@@ -84,7 +84,7 @@ Website::setDescription('Consultez les dernières actualités');
                     <div class="flex items-center mt-4">
                         <div class="flex-shrink-0 w-5 h-5">
                             <img class="rounded-full"
-                                 src="<?php echo UsersSessionsController::getInstance()->getCurrentUser()->getUserPicture()?->getImage(); ?>"
+                                 src="<?= UsersSessionsController::getInstance()->getCurrentUser()->getUserPicture()?->getImage(); ?>"
                                  alt="Author">
                         </div>
                         <div class="ml-3">

@@ -4,7 +4,13 @@ use CMW\Controller\Users\UsersSessionsController;
 use CMW\Manager\Env\EnvManager;
 use CMW\Utils\Website;
 use CMW\Model\News\NewsTagsModel;
+use CMW\Model\News\NewsModel;
 
+$newsLists = new newsModel;
+$newsList = $newsLists->getSomeNews(9, 'DESC');
+
+$tagsLists = new NewsTagsModel;
+$tags = $tagsLists->getTags();
 
 Website::setTitle('Accueil');
 Website::setDescription("page d'accueil de CraftMyWebsite");
@@ -16,7 +22,7 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
              height="768"
              src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/photo-background.png' ?>">
         <div class="absolute bottom-5 left-5 text-white text-shadow-lg flex flex-col items-start ">
-            <h2 class="text-2xl font-bold z-[1]"> </h2>
+            <h2 class="text-2xl font-bold z-[1]">Mon dressing</h2>
             <p class="leading-4 text-base mt-0 sm:ml- md:max-w-80 xl:max-w-96 sm:mt-2 sm:ml-0 z-[1]">Découvrez mon
                 dressing sous tous ses
                 ensembles</p>
@@ -33,22 +39,22 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
     Vous trouverez ici les 9 derniers blogs disponibles et mis en ligne.
 </h3>
 <nav class="z-30 flex my-2 items-center">
-    <?php
-    $categories = ['All', 'Destination', 'Culinary', 'Lifestyle', 'Tips & Hacks'];
-    ?>
+
     <a href="#"
-       class="hidden md:block rounded mr-2 bg-gray-100 px-4 py-2 text-black">Cuisine</a>
-    <?php foreach ($categories as $category) : ?>
+       class="hidden md:block rounded mr-2 bg-gray-100 px-4 py-2 text-black">All</a>
+    <!-- Tag sélectif -->
+    <?php foreach ($tags as $tag) : ?>
         <a href="#"
-           class="hidden md:block rounded mr-2 bg-white px-4 py-2 text-black"><?php echo htmlspecialchars($category); ?></a>
+           class="hidden md:block rounded mr-2 bg-white px-4 py-2 text-black"><?php echo htmlspecialchars($tag->getName()); ?></a>
     <?php endforeach; ?>
+    <!-- Tag sélectif mobile -->
     <div class="flex-col items-center md:flex md:flex-row md:items-center md:ml-auto">
         <div class="flex items-center md:mr-4">
             <span class="md:hidden text-gray-500 mr-2">Catégories :</span>
             <div class="md:hidden flex items-center">
                 <select class="rounded bg-white border-solid border border-gray-100 px-2 py-1 text-black">
-                    <?php foreach ($categories as $category) : ?>
-                        <option><?php echo htmlspecialchars($category); ?></option>
+                    <?php foreach ($tags as $tag) : ?>
+                        <option><?php echo htmlspecialchars($tag->getName()); ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -66,32 +72,38 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
 
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
-    <?php foreach ([1, 2, 3, 4, 5, 6, 7, 8, 9] as $article) : ?>
+    <?php foreach ($newsList as $article) : ?>
         <div class="flex gap-0 justify-between sm:gap-4 md:gap-4 mb-5 ">
             <div class="w-[90%] rounded-lg overflow-hidden mx-auto relative ">
-                <div class="absolute bg-gray-300 opacity-90 text-white text-xs rounded-2xl px-2 py-2 top-2 left-2">
-                    Mode
-                </div>
+                <?php
+                $tagOffset = 1; // Départ initial pour la position
+                foreach ($article->getTags() as $tag): ?>
+                    <div class="absolute bg-gray-300 opacity-90 text-white text-xs rounded-2xl px-2 py-1"
+                         style="top: <?= $tagOffset ?>rem; left: 0.5rem;">
+                        <?= $tag->getName(); ?>
+                    </div>
+                    <?php $tagOffset += 2; // Incrémenter pour espacer chaque tag ?>
+                <?php endforeach; ?>
                 <img class="w-full h-48 object-cover"
-                     src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/vetements.png' ?>"
+                     src="<?= $article->getImageLink() ?>"
                      alt="Packing Tips">
                 <div class="p-4">
                 <span
                     class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded"><?= date('z-M-Y') ?></span>
                     <h2 class="text-lg font-semibold text-gray-800 mt-2">
-                        Mon dressing
+                        <?= htmlspecialchars($article->getTitle()); ?>
                     </h2>
                     <p class="text-sm text-gray-600 mt-2">
-                        Découvrez mon dressing sous tous ses ensembles
+                        <?= htmlspecialchars($article->getDescription()); ?>
                     </p>
                     <div class="flex items-center mt-4">
                         <div class="flex-shrink-0 w-5 h-5">
                             <img class="rounded-full"
-                                 src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/pp-basic.jpg' ?>"
+                                 src="<?= UsersSessionsController::getInstance()->getCurrentUser()->getUserPicture()?->getImage(); ?>"
                                  alt="Author">
                         </div>
                         <div class="ml-3">
-                            <p class="text-sm font-medium text-gray-800 ">Some1</p>
+                            <p class="text-sm font-medium text-gray-800 "><?= $article->getAuthor()->getPseudo() ?></p>
                             <p class="text-sm text-gray-500"></p>
                         </div>
                     </div>
