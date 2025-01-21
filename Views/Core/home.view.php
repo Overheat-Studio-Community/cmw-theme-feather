@@ -111,7 +111,7 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
             </div>
         </div>
     <?php endforeach; ?>
-a
+
 </div>
 <div class="flex items-center gap-5 mx-auto my-4 font-medium">
     <i class="border rounded px-3 py-2 fa-solid fa-chevron-left"></i>
