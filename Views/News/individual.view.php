@@ -79,7 +79,7 @@ Website::setDescription($news->getDescription());
                         </div>
                         <div class="mt-2">
                             <span class="font-bold"><?= $comment->getUser()->getPseudo() ?></span>
-                            <div class="flex flex-col items-center mt-2">
+                            <div class="flex flex-col items-left mt-2">
                                 <p class="text-sm"><?= $comment->getContent() ?></p>
                                 <span class="text-xs text-gray-500">Le : <?= $comment->getDate() ?></span>
                                 <div class="mt-2">
