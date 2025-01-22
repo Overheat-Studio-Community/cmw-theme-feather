@@ -6,11 +6,9 @@ use CMW\Utils\Website;
 use CMW\Controller\Users\UsersSessionsController;
 use CMW\Model\News\NewsTagsModel;
 
-/* $tags = NewsTagsEntity::getName(); */
 $newsTags = NewsTagsModel::getInstance()->getTags();
 /* @var NewsEntity [] $newsList */
 /* @var NewsTagsModel [] $newsTags */
-/*  NewsTagsEntity::getName(); */
 Website::setTitle('News');
 Website::setDescription('Consultez les dernières actualités');
 ?>
@@ -55,51 +53,52 @@ Website::setDescription('Consultez les dernières actualités');
 
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
-    <?php foreach ($newsList as $news): ?>
+    <?php foreach ($newsList as $article) : ?>
         <div class="flex gap-0 justify-between sm:gap-4 md:gap-4 mb-5">
-            <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>news/<?= $news->getSlug() ?>"
+            <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>news/<?= htmlspecialchars($article->getSlug()) ?>"
                class="block w-[90%] rounded-lg overflow-hidden mx-auto relative">
+            <div class="w-[90%] rounded-lg overflow-hidden mx-auto relative">
                 <?php
-                $tagOffset = 1; // Départ initial pour la position
-                foreach ($news->getTags() as $tag): ?>
+                $tagOffset = 1; // Départ initial pour la position des tags
+                foreach ($article->getTags() as $tag): ?>
                     <div class="absolute bg-gray-300 opacity-90 text-white text-xs rounded-2xl px-2 py-1"
                          style="top: <?= $tagOffset ?>rem; left: 0.5rem;">
-                        <?= $tag->getName(); ?>
+                        <?= htmlspecialchars($tag->getName()); ?>
                     </div>
                     <?php $tagOffset += 2; // Incrémenter pour espacer chaque tag ?>
                 <?php endforeach; ?>
+
                 <img class="w-full h-48 object-cover"
-                     src="<?= $news->getImageLink() ?>"
-                     alt="<?= $news->getTitle() ?>">
+                     src="<?= $article->getImageLink() ?: EnvManager::getInstance()->getValue("DEFAULT_IMAGE_PATH") ?>"
+                     alt="Image de l'article">
+
                 <div class="p-4">
-                <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                    <?= $news->getDateCreated() ?>
-                </span>
+                    <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                        <?= date('d-M-Y', strtotime($article->getDateCreated())) ?>
+                    </span>
                     <h2 class="text-lg font-semibold text-gray-800 mt-2">
-                        <?= $news->getTitle() ?>
+                        <?= htmlspecialchars($article->getTitle()); ?>
                     </h2>
                     <p class="text-sm text-gray-600 mt-2">
-                        <?= $news->getDescription() ?>
+                        <?= htmlspecialchars($article->getDescription()); ?>
                     </p>
                     <div class="flex items-center mt-4">
                         <div class="flex-shrink-0 w-5 h-5">
                             <img class="rounded-full"
-                                 src="<?= UsersSessionsController::getInstance()->getCurrentUser()->getUserPicture()?->getImage(); ?>"
-                                 alt="Author">
+                                 src="<?= $article->getAuthor()?->getUserPicture()?->getImage() ?: EnvManager::getInstance()->getValue("DEFAULT_PROFILE_PICTURE") ?>"
+                                 alt="Auteur">
                         </div>
                         <div class="ml-3">
                             <p class="text-sm font-medium text-gray-800">
-                                <?= $news->getAuthor()->getPseudo() ?>
+                                <?= $article->getAuthor()?->getPseudo() ?: 'Auteur inconnu'; ?>
                             </p>
-                            <p class="text-sm text-gray-500"></p>
                         </div>
                     </div>
                 </div>
+            </div>
             </a>
         </div>
     <?php endforeach; ?>
-
-
 </div>
 <div class="flex items-center gap-5 mx-auto my-4 font-medium">
     <i class="border rounded px-3 py-2 fa-solid fa-chevron-left"></i>
