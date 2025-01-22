@@ -1,17 +1,30 @@
 <?php
 
-use CMW\Controller\Users\UsersSessionsController;
 use CMW\Manager\Env\EnvManager;
 use CMW\Utils\Website;
 use CMW\Model\News\NewsTagsModel;
 use CMW\Model\News\NewsModel;
 
-
-$newsLists = new newsModel;
-$newsList = $newsLists->getSomeNews(9, 'DESC');
-
+$newsLists = new NewsModel;
 $tagsLists = new NewsTagsModel;
+
+// Filtre des tags
 $tags = $tagsLists->getTags();
+
+$tagFilter = $_GET['tag'] ?? 'all';
+
+if ($tagFilter === 'all') {
+    $newsList = $newsLists->getSomeNews(9, 'DESC');
+} else {
+    $tag = $tagsLists->getTagByName($tagFilter);
+    if ($tag) {
+        $newsList = $tagsLists->getNewsForTagById($tag->getId());
+    } else {
+        $newsList = $newsLists->getSomeNews(9, 'DESC');
+    }
+}
+
+
 
 Website::setTitle('Accueil');
 Website::setDescription("page d'accueil de CraftMyWebsite");
@@ -32,30 +45,27 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
     </div>
 </div>
 
-
 <h2 class="mt-6 text-3xl">
     Blog
 </h2>
 <h3 class="text-xl mt-3 text-gray-600">
-    Vous trouverez ici les 9 derniers blogs disponibles et mis en ligne.
+    Vous trouverez ici les derniers blogs disponibles et mis en ligne.
 </h3>
 <nav class="z-30 flex my-2 items-center">
-
-    <a href="#"
-       class="hidden md:block rounded mr-2 bg-gray-100 px-4 py-2 text-black">All</a>
-    <!-- Tag sélectif -->
+    <a href="?tag=all" class="hidden md:block rounded mr-2 bg-gray-100 px-4 py-2 text-black">All</a>
     <?php foreach ($tags as $tag) : ?>
-        <a href="#"
-           class="hidden md:block rounded mr-2 bg-white px-4 py-2 text-black"><?php echo htmlspecialchars($tag->getName()); ?></a>
+        <a href="?tag=<?= urlencode($tag->getName()) ?>" class="hidden md:block rounded mr-2 bg-white px-4 py-2 text-black">
+            <?= htmlspecialchars($tag->getName()); ?>
+        </a>
     <?php endforeach; ?>
-    <!-- Tag sélectif mobile -->
     <div class="flex-col items-center md:flex md:flex-row md:items-center md:ml-auto">
         <div class="flex items-center md:mr-4">
             <span class="md:hidden text-gray-500 mr-2">Catégories :</span>
             <div class="md:hidden flex items-center">
-                <select class="rounded bg-white border-solid border border-gray-100 px-2 py-1 text-black">
+                <select class="rounded bg-white border-solid border border-gray-100 px-2 py-1 text-black" onchange="location = this.value;">
+                    <option value="?tag=all">All</option>
                     <?php foreach ($tags as $tag) : ?>
-                        <option><?php echo htmlspecialchars($tag->getName()); ?></option>
+                        <option value="?tag=<?= urlencode($tag->getName()) ?>"><?= htmlspecialchars($tag->getName()); ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -70,7 +80,6 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
         </div>
     </div>
 </nav>
-
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
     <?php foreach ($newsList as $article) : ?>

@@ -28,7 +28,7 @@ Website::setDescription($news->getDescription());
         <div class="flex justify-center">
             <img src="<?= $news->getImageLink() ?>" class="rounded-lg w-auto" alt="<?= $news->getTitle() ?>">
         </div>
-        <div class="w-full flex flex-col md:flex-row">
+        <div class="flex flex-col md:flex-row">
             <!-- Contenu principal -->
             <article class="flex-1 flex flex-col space-y-4">
                 <div class="article-content break-words overflow-hidden text-wrap max-w-xl">
@@ -42,16 +42,18 @@ Website::setDescription($news->getDescription());
                             <span class="like-count whitespace-nowrap"><?= $news->getLikes()->getTotal() ?></span>
                             <?php if (UsersController::isUserLogged()): ?>
                                 <?php if ($news->getLikes()->userCanLike()): ?>
-                                    <a href="#" class="like-button text-red-500 whitespace-nowrap"><i
-                                            class="fa-solid fa-heart"></i></a>
+                                    <a href="#" class="like-button text-gray-500 whitespace-nowrap"><i
+                                            class="fa-solid fa-thumbs-up"></i></a>
                                 <?php else: ?>
                                     <a href="<?= $news->getLikes()->getSendLike() ?>"
                                        class="like-button text-gray-500 whitespace-nowrap"><i
-                                            class="fa-regular fa-heart"></i></a>
+                                            class="fa-regular fa-thumbs-up"></i></a>
                                 <?php endif; ?>
                             <?php else: ?>
 
-                                <a class="text-gray-500" href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>login"><i class="fa-solid fa-heart"></i></a>
+                                <a class="text-gray-500"
+                                   href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>login"><i
+                                        class="fa-regular fa-thumbs-up"></i></a>
                             <?php endif; ?>
                         </span>
                     <?php endif; ?>
@@ -59,16 +61,15 @@ Website::setDescription($news->getDescription());
             </article>
 
             <!-- Barre latérale sticky -->
-            <aside class="flex sticky top-8 md:w-1/4 bg-gray-50 py-2 px-6 md:right-0 rounded">
-                <div class="mt-2">
+            <aside class="top-20">
+                <div class=" mt-2 fixed bg-gray-50 py-2 px-6 rounded max-h-10">
                     <h3 class="text-md font-semibold mb-2">À propos de l'auteur</h3>
-                    <p class="flex text-gray-600 text-sm">
-                        Auteur :
+                    <div class="flex text-gray-600 items-center gap-2 text-sm">
+                        <img class="w-8 h-8 rounded-full"
+                             src="<?= $news->getAuthor()?->getUserPicture()?->getImage() ?: EnvManager::getInstance()->getValue("DEFAULT_PROFILE_PICTURE") ?>"
+                             alt="Image de profil de <?= $news->getAuthor()->getPseudo() ?>">
                         <?= $news->getAuthor()->getPseudo() ?>
-                    </p>
-                    <img class="w-10 h-10 rounded-full"
-                         src="<?= $news->getAuthor()?->getUserPicture()?->getImage() ?: EnvManager::getInstance()->getValue("DEFAULT_PROFILE_PICTURE") ?>"
-                         alt="Image de profil de <?= $news->getAuthor()->getPseudo() ?>">
+                    </div>
                 </div>
             </aside>
         </div>
@@ -106,7 +107,9 @@ Website::setDescription($news->getDescription());
                                         <?php endif; ?>
                                     <?php else: ?>
 
-                                        <a class="text-gray-500" href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>login"><i class="fa-regular fa-thumbs-up"></i></a>
+                                        <a class="text-gray-500"
+                                           href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>login"><i
+                                                class="fa-regular fa-thumbs-up"></i></a>
                                     <?php endif; ?>
                                 </span>
                             </div>
@@ -185,3 +188,42 @@ Website::setDescription($news->getDescription());
         </div>
     </section>
 </section>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const aside = document.querySelector('aside');
+        const article = document.querySelector('article');
+        const mdBreakpoint = 768; // Assuming 'md' breakpoint is 768px
+
+        function updateAsidePosition() {
+            const articleRect = article.getBoundingClientRect();
+            const asideRect = aside.getBoundingClientRect();
+
+            if (window.innerWidth >= mdBreakpoint) {
+                if (articleRect.bottom <= 0) {
+                    aside.style.display = 'none';
+                } else {
+                    aside.style.display = 'block';
+                    if (articleRect.top < 0) {
+                        aside.style.position = 'fixed';
+                        aside.style.top = '20px';
+                    } else {
+                        aside.style.position = 'absolute';
+                        aside.style.top = 'initial';
+                    }
+                    aside.style.right = `${window.innerWidth - articleRect.right + 20}px`;
+                }
+            } else {
+                aside.style.position = 'absolute';
+                aside.style.top = 'initial';
+                aside.style.right = 'initial';
+                aside.style.display = 'block';
+            }
+        }
+
+        if (window.innerWidth >= mdBreakpoint) {
+            window.addEventListener('scroll', updateAsidePosition);
+            window.addEventListener('resize', updateAsidePosition);
+            updateAsidePosition();
+        }
+    });
+</script>
