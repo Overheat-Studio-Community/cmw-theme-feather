@@ -12,34 +12,16 @@ $allNews = $newsLists->getNews(); // Charge tous les articles
 $tags = $tagsLists->getTags(); // Charge tous les tags
 
 $order = $_GET['order'] ?? 'DESC';
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$limit = 9;
 $selectedTag = $_GET['tag'] ?? 'all';
-
-// Filtrer les articles par tag si nécessaire
-if ($selectedTag !== 'all') {
-    $allNews = array_filter($allNews, function($article) use ($selectedTag) {
-        $articleTags = array_map(fn($tag) => $tag->getName(), $article->getTags());
-        return in_array($selectedTag, $articleTags);
-    });
-}
-
-// Trier les articles après le filtrage
-usort($allNews, function($a, $b) use ($order) {
-    if ($order === 'ASC') {
-        return strtotime($a->getDateCreated()) - strtotime($b->getDateCreated());
-    } else {
-        return strtotime($b->getDateCreated()) - strtotime($a->getDateCreated());
-    }
-});
-
-// Calculer la pagination après le tri
-$totalNews = count($allNews);
-$totalPages = ceil($totalNews / $limit);
+$page = $_GET['page'] ?? 1;
+$limit = 9;
 $offset = ($page - 1) * $limit;
 
-// Découper les articles pour la page courante
-$newsList = array_slice($allNews, $offset, $limit);
+$totalNews = count($allNews);
+$totalPages = ceil($totalNews / $limit);
+
+// Slice the array to get the news items for the current page
+$newsWithPagination = array_slice($allNews, $offset, $limit);
 
 // Récupérer la dernière news
 $latestNews = $newsLists->getSomeNews(1, 'DESC')[0];
@@ -66,7 +48,7 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
     Vous trouverez ici les derniers blogs disponibles et mis en ligne.
 </h3>
 <nav class="z-30 flex my-2 items-center">
-    <a href="#" class="tag-filter hidden md:block rounded mr-2 px-4 py-2 bg-gray-100 text-black" data-tag="all">All</a>
+    <a href="#" class="tag-filter hidden md:block rounded mr-2 px-4 py-2 text-black" data-tag="all">All</a>
     <?php foreach ($tags as $tag) : ?>
         <a href="#" class="tag-filter hidden md:block rounded mr-2 px-4 py-2 bg-white text-black" data-tag="<?= htmlspecialchars($tag->getName()) ?>">
             <?= htmlspecialchars($tag->getName()); ?>
@@ -95,8 +77,8 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
 </nav>
 
 <div id="newsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
-    <?php foreach ($newsList as $article) : ?>
-        <div class="news-item flex gap-0 justify-between sm:gap-4 md:gap-4 mb-5 w-full" data-tags="<?= implode(',', array_map(fn($tag) => htmlspecialchars($tag->getName()), $article->getTags())) ?>">
+    <?php foreach ($newsWithPagination as $article) : ?>
+        <div class="news-item flex gap-0 justify-between sm:gap-4 md:gap-4 mb-5 w-full" data-tags="<?= implode(',', array_map(fn($tag) => htmlspecialchars($tag->getName()), $article->getTags())) ?>" data-date="<?= htmlspecialchars($article->getDateCreated()) ?>">
             <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>news/<?= htmlspecialchars($article->getSlug()) ?>"
                class="block w-[90%] rounded-lg relative">
                 <div class="rounded-lg overflow-hidden mx-auto">
@@ -142,25 +124,37 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
         </div>
     <?php endforeach; ?>
 </div>
+<div class="flex pagination justify-center gap-8">
+    <?php if ($page > 1): ?>
+        <a href="?page=<?= $page - 1 ?>&order=<?= $order ?>&tag=<?= $selectedTag ?>" class="prev"><i class="fa-solid fa-chevron-left"></i></a>
+    <?php endif; ?>
 
-<div class="flex items-center gap-5 mx-auto my-4 font-medium">
-    <a href="?order=<?= $order ?>&page=<?= max(1, $page - 1) ?>&tag=<?= htmlspecialchars($selectedTag) ?>"
-       class="border rounded px-3 py-2 fa-solid fa-chevron-left"></a>
-    <div class="flex items-center gap-5">
-        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-            <a href="?order=<?= $order ?>&page=<?= $i ?>&tag=<?= htmlspecialchars($selectedTag) ?>"
-               class="w-8 text-center <?= $i === $page ? 'bg-gray-100 rounded py-1' : '' ?>"><?= $i ?></a>
-        <?php endfor; ?>
-    </div>
-    <a href="?order=<?= $order ?>&page=<?= min($page + 1, $totalPages) ?>&tag=<?= htmlspecialchars($selectedTag) ?>"
-       class="border rounded px-3 py-2 fa-solid fa-chevron-right"></a>
+    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+        <a href="?page=<?= $i ?>&order=<?= $order ?>&tag=<?= $selectedTag ?>" class="<?= $i == $page ? 'bg-gray-500 font-bold' : '' ?>"><?= $i ?></a>
+    <?php endfor; ?>
+
+    <?php if ($page < $totalPages): ?>
+        <a href="?page=<?= $page + 1 ?>&order=<?= $order ?>&tag=<?= $selectedTag ?>" class="next"><i class="fa-solid fa-chevron-right"></i></a>
+    <?php endif; ?>
 </div>
 <script>
     function sortNews() {
         const order = document.getElementById('sortOrder').value;
-        const urlParams = new URLSearchParams(window.location.search);
-        urlParams.set('order', order);
-        window.location.search = urlParams.toString();
+        const newsContainer = document.getElementById('newsContainer');
+        const newsItems = Array.from(newsContainer.getElementsByClassName('news-item'));
+
+        newsItems.sort((a, b) => {
+            const dateA = new Date(a.getAttribute('data-date'));
+            const dateB = new Date(b.getAttribute('data-date'));
+
+            if (order === 'ASC') {
+                return dateA - dateB;
+            } else {
+                return dateB - dateA;
+            }
+        });
+
+        newsItems.forEach(item => newsContainer.appendChild(item));
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -168,13 +162,17 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
         const newsItems = document.querySelectorAll('.news-item');
         const tagSelect = document.getElementById('tagSelect');
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialTag = urlParams.get('tag') || 'all';
+        filterNews(initialTag);
+        updateTagFilterUI(initialTag);
+
         tagFilters.forEach(filter => {
             filter.addEventListener('click', (e) => {
                 e.preventDefault();
                 const tag = filter.getAttribute('data-tag');
                 filterNews(tag);
-                tagFilters.forEach(f => f.classList.remove('bg-gray-300'));
-                filter.classList.add('bg-gray-300');
+                updateTagFilterUI(tag);
                 updateURL(tag);
             });
         });
@@ -202,6 +200,16 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
             const urlParams = new URLSearchParams(window.location.search);
             urlParams.set('tag', tag);
             window.history.replaceState(null, null, "?" + urlParams.toString());
+        }
+
+        function updateTagFilterUI(tag) {
+            tagFilters.forEach(f => {
+                f.classList.remove('font-bold');
+            });
+            const activeFilter = document.querySelector(`.tag-filter[data-tag="${tag}"]`);
+            if (activeFilter) {
+                activeFilter.classList.add('font-bold');
+            }
         }
     });
 </script>
