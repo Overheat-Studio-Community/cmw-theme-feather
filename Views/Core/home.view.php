@@ -1,30 +1,10 @@
 <?php
 
 use CMW\Manager\Env\EnvManager;
-use CMW\Utils\Website;
 use CMW\Model\News\NewsTagsModel;
-use CMW\Model\News\NewsModel;
+use CMW\Utils\Website;
 
-$newsLists = new NewsModel;
-$tagsLists = new NewsTagsModel;
-
-$allNews = $newsLists->getNews(); // Charge tous les articles
-$tags = $tagsLists->getTags(); // Charge tous les tags
-
-$order = $_GET['order'] ?? 'DESC';
-$selectedTag = $_GET['tag'] ?? 'all';
-$page = $_GET['page'] ?? 1;
-$limit = 9;
-$offset = ($page - 1) * $limit;
-
-$totalNews = count($allNews);
-$totalPages = ceil($totalNews / $limit);
-
-// Slice the array to get the news items for the current page
-$newsWithPagination = array_slice($allNews, $offset, $limit);
-
-// Récupérer la dernière news
-$latestNews = $newsLists->getSomeNews(1, 'DESC')[0];
+$tags = NewsTagsModel::getInstance()->getTags();
 
 Website::setTitle('Accueil');
 Website::setDescription("page d'accueil de CraftMyWebsite");
@@ -33,10 +13,10 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
     <div class="mx-auto shadow-md rounded-lg overflow-hidden relative">
         <img class="max-w-52 max-h-52 object-cover aspect-square sm:aspect-auto object-center"
              alt="Background"
-             src="<?= $latestNews->getImageLink() ?: EnvManager::getInstance()->getValue("DEFAULT_IMAGE_PATH") ?>">
+             src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/photo-background.png' ?>">
         <div class="absolute bottom-5 left-5 text-white text-shadow-lg flex flex-col items-start ">
-            <h2 class="text-2xl font-bold z-[1]"><?= htmlspecialchars($latestNews->getTitle()) ?></h2>
-            <p class="leading-4 text-base mt-0 sm:ml- md:max-w-80 xl:max-w-96 sm:mt-2 sm:ml-0 z-[1]"><?= htmlspecialchars($latestNews->getDescription()) ?></p>
+            <h2 class="text-2xl font-bold z-[1]"><?= Website::getWebsiteName() ?></h2>
+            <p class="leading-4 text-base mt-0 sm:ml- md:max-w-80 xl:max-w-96 sm:mt-2 sm:ml-0 z-[1]"><?= Website::getWebsiteDescription() ?></p>
             <div class="absolute inset-0 bg-black/25 blur-xl"></div>
         </div>
     </div>
@@ -50,36 +30,42 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
 <nav class="z-30 flex my-2 items-center">
     <a href="#" class="tag-filter hidden md:block rounded mr-2 px-4 py-2 text-black" data-tag="all">All</a>
     <?php foreach ($tags as $tag) : ?>
-        <a href="#" class="tag-filter hidden md:block rounded mr-2 px-4 py-2 bg-white text-black" data-tag="<?= htmlspecialchars($tag->getName()) ?>">
-            <?= htmlspecialchars($tag->getName()); ?>
+        <a href="#" class="tag-filter hidden md:block rounded mr-2 px-4 py-2 bg-white text-black"
+           data-tag="<?= $tag->getName() ?>">
+            <?= $tag->getName() ?>
         </a>
     <?php endforeach; ?>
     <div class="flex-col items-center md:flex md:flex-row md:items-center md:ml-auto">
         <div class="flex items-center md:mr-4">
             <span class="md:hidden text-gray-500 mr-2">Catégories :</span>
             <div class="md:hidden flex items-center">
-                <select class="rounded bg-white border-solid border border-gray-100 px-2 py-1 text-black" id="tagSelect">
+                <select class="rounded bg-white border-solid border border-gray-100 px-2 py-1 text-black"
+                        id="tagSelect">
                     <option value="all">All</option>
                     <?php foreach ($tags as $tag) : ?>
-                        <option value="<?= htmlspecialchars($tag->getName()) ?>"><?= htmlspecialchars($tag->getName()); ?></option>
+                        <option
+                            value="<?= $tag->getName() ?>"><?= htmlspecialchars($tag->getName()); ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
         </div>
         <div class="flex items-center mt-3 md:mt-0">
             <span class="text-gray-500 mr-2">Sort by:</span>
-            <select id="sortOrder" class="rounded bg-white border-solid border border-gray-100 px-2 py-1 text-black" onchange="sortNews()">
-                <option value="DESC" <?= $order === 'DESC' ? 'selected' : '' ?>>Récent</option>
-                <option value="ASC" <?= $order === 'ASC' ? 'selected' : '' ?>>Ancien</option>
+            <select id="sortOrder" class="rounded bg-white border-solid border border-gray-100 px-2 py-1 text-black"
+                    onchange="sortNews()">
+                <option value="DESC" selected>Récent</option>
+                <option value="ASC">Ancien</option>
             </select>
         </div>
     </div>
 </nav>
 
 <div id="newsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
-    <?php foreach ($newsWithPagination as $article) : ?>
-        <div class="news-item flex gap-0 justify-between sm:gap-4 md:gap-4 mb-5 w-full" data-tags="<?= implode(',', array_map(fn($tag) => htmlspecialchars($tag->getName()), $article->getTags())) ?>" data-date="<?= htmlspecialchars($article->getDateCreated()) ?>">
-            <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>news/<?= htmlspecialchars($article->getSlug()) ?>"
+    <?php foreach ([] as $article) : ?>
+        <div class="news-item flex gap-0 justify-between sm:gap-4 md:gap-4 mb-5 w-full"
+             data-tags="<?= implode(',', array_map(static fn($tag) => $tag->getName(), $article->getTags())) ?>"
+             data-date="<?= htmlspecialchars($article->getDateCreated()) ?>">
+            <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>news/<?= $article->getSlug() ?>"
                class="block w-[90%] rounded-lg relative">
                 <div class="rounded-lg overflow-hidden mx-auto">
                     <?php
@@ -124,20 +110,50 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
         </div>
     <?php endforeach; ?>
 </div>
-<div class="flex pagination justify-center gap-8">
-    <?php if ($page > 1): ?>
-        <a href="?page=<?= $page - 1 ?>&order=<?= $order ?>&tag=<?= $selectedTag ?>" class="prev"><i class="fa-solid fa-chevron-left"></i></a>
-    <?php endif; ?>
+<!--<div class="flex pagination justify-center gap-8">
+    <?php /*if ($page > 1): */ ?>
+        <a href="?page=<?php /*= $page - 1 */ ?>&order=<?php /*= $order */ ?>&tag=<?php /*= $selectedTag */ ?>" class="prev"><i
+                class="fa-solid fa-chevron-left"></i></a>
+    <?php /*endif; */ ?>
 
-    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-        <a href="?page=<?= $i ?>&order=<?= $order ?>&tag=<?= $selectedTag ?>" class="<?= $i == $page ? 'bg-gray-500 font-bold' : '' ?>"><?= $i ?></a>
-    <?php endfor; ?>
+    <?php /*for ($i = 1; $i <= $totalPages; $i++): */ ?>
+        <a href="?page=<?php /*= $i */ ?>&order=<?php /*= $order */ ?>&tag=<?php /*= $selectedTag */ ?>"
+           class="<?php /*= $i == $page ? 'bg-gray-500 font-bold' : '' */ ?>"><?php /*= $i */ ?></a>
+    <?php /*endfor; */ ?>
 
-    <?php if ($page < $totalPages): ?>
-        <a href="?page=<?= $page + 1 ?>&order=<?= $order ?>&tag=<?= $selectedTag ?>" class="next"><i class="fa-solid fa-chevron-right"></i></a>
-    <?php endif; ?>
-</div>
+    <?php /*if ($page < $totalPages): */ ?>
+        <a href="?page=<?php /*= $page + 1 */ ?>&order=<?php /*= $order */ ?>&tag=<?php /*= $selectedTag */ ?>" class="next"><i
+                class="fa-solid fa-chevron-right"></i></a>
+    <?php /*endif; */ ?>
+</div>-->
 <script>
+    const getArticles = async () => {
+        const req = await fetch('<?= EnvManager::getInstance()->getValue('PATH_URL') ?>api/news', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        )
+
+        const res = await req.json()
+
+        const container = document.getElementById('newsContainer')
+
+        if (res.news === undefined) {
+            container.appendChild(document.createTextNode('Aucun article trouvé'))
+            return
+        }
+
+        const articles = res.news
+
+        articles.forEach((article) => container.appendChild(document.createTextNode(article.title)))
+
+        console.log(res)
+    }
+
+    getArticles()
+
     function sortNews() {
         const order = document.getElementById('sortOrder').value;
         const newsContainer = document.getElementById('newsContainer');
