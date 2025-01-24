@@ -60,72 +60,7 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
     </div>
 </nav>
 
-<div id="newsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
-    <?php foreach ([] as $article) : ?>
-        <div class="news-item flex gap-0 justify-between sm:gap-4 md:gap-4 mb-5 w-full"
-             data-tags="<?= implode(',', array_map(static fn($tag) => $tag->getName(), $article->getTags())) ?>"
-             data-date="<?= htmlspecialchars($article->getDateCreated()) ?>">
-            <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>news/<?= $article->getSlug() ?>"
-               class="block w-[90%] rounded-lg relative">
-                <div class="rounded-lg overflow-hidden mx-auto">
-                    <?php
-                    $tagOffset = 1; // Départ initial pour la position des tags
-                    foreach ($article->getTags() as $tag): ?>
-                        <div class="absolute bg-gray-300 opacity-90 text-white text-xs rounded-2xl px-2 py-1"
-                             style="top: <?= $tagOffset ?>rem; left: 0.5rem;">
-                            <?= htmlspecialchars($tag->getName()); ?>
-                        </div>
-                        <?php $tagOffset += 2; // Incrémenter pour espacer chaque tag ?>
-                    <?php endforeach; ?>
-
-                    <img class="w-full h-48 object-cover"
-                         src="<?= $article->getImageLink() ?: EnvManager::getInstance()->getValue("DEFAULT_IMAGE_PATH") ?>"
-                         alt="Image de l'article">
-
-                    <div class="p-4">
-                    <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                        <?= date('d-M-Y', strtotime($article->getDateCreated())) ?>
-                    </span>
-                        <h2 class="text-lg font-semibold text-gray-800 mt-2">
-                            <?= htmlspecialchars($article->getTitle()); ?>
-                        </h2>
-                        <p class="text-sm text-gray-600 mt-2">
-                            <?= htmlspecialchars($article->getDescription()); ?>
-                        </p>
-                        <div class="flex items-center mt-4">
-                            <div class="flex-shrink-0 w-5 h-5">
-                                <img class="rounded-full"
-                                     src="<?= $article->getAuthor()?->getUserPicture()?->getImage() ?: EnvManager::getInstance()->getValue("DEFAULT_PROFILE_PICTURE") ?>"
-                                     alt="Auteur">
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm font-medium text-gray-800">
-                                    <?= $article->getAuthor()?->getPseudo() ?: 'Auteur inconnu'; ?>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-    <?php endforeach; ?>
-</div>
-<!--<div class="flex pagination justify-center gap-8">
-    <?php /*if ($page > 1): */ ?>
-        <a href="?page=<?php /*= $page - 1 */ ?>&order=<?php /*= $order */ ?>&tag=<?php /*= $selectedTag */ ?>" class="prev"><i
-                class="fa-solid fa-chevron-left"></i></a>
-    <?php /*endif; */ ?>
-
-    <?php /*for ($i = 1; $i <= $totalPages; $i++): */ ?>
-        <a href="?page=<?php /*= $i */ ?>&order=<?php /*= $order */ ?>&tag=<?php /*= $selectedTag */ ?>"
-           class="<?php /*= $i == $page ? 'bg-gray-500 font-bold' : '' */ ?>"><?php /*= $i */ ?></a>
-    <?php /*endfor; */ ?>
-
-    <?php /*if ($page < $totalPages): */ ?>
-        <a href="?page=<?php /*= $page + 1 */ ?>&order=<?php /*= $order */ ?>&tag=<?php /*= $selectedTag */ ?>" class="next"><i
-                class="fa-solid fa-chevron-right"></i></a>
-    <?php /*endif; */ ?>
-</div>-->
+<div id="newsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto"></div>
 <script>
     const getArticles = async () => {
         const req = await fetch('<?= EnvManager::getInstance()->getValue('PATH_URL') ?>api/news', {
@@ -134,25 +69,59 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
                     'Content-Type': 'application/json',
                 },
             }
-        )
+        );
 
-        const res = await req.json()
+        const res = await req.json();
 
-        const container = document.getElementById('newsContainer')
+        const container = document.getElementById('newsContainer');
+        container.innerHTML = ''; // Clear the container
 
         if (res.news === undefined) {
-            container.appendChild(document.createTextNode('Aucun article trouvé'))
-            return
+            container.appendChild(document.createTextNode('Aucun article trouvé'));
+            return;
         }
 
-        const articles = res.news
+        const articles = res.news;
+        articles.forEach((article) => {
+            const articleElement = document.createElement('div');
+            articleElement.className = 'news-item flex gap-0 justify-between sm:gap-4 md:gap-4 mb-5 w-full';
+            articleElement.setAttribute('data-tags', article.tags.join(','));
+            articleElement.setAttribute('data-date', article.dateCreated);
 
-        articles.forEach((article) => container.appendChild(document.createTextNode(article.title)))
+            articleElement.innerHTML = `
+            <a href="${article.articleLink}" class="block w-[90%] rounded-lg relative">
+                <div class="rounded-lg overflow-hidden mx-auto">
+                    <img class="w-full h-48 object-cover" src="${article.imageLink}" alt="Image de l'article">
+                    <div class="p-4">
+                        <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                            ${article.dateCreated}
+                        </span>
+                        <h2 class="text-lg font-semibold text-gray-800 mt-2">
+                            ${article.title}
+                        </h2>
+                        <p class="text-sm text-gray-600 mt-2">
+                            ${article.description}
+                        </p>
+                        <div class="flex items-center mt-4">
+                            <div class="flex-shrink-0 w-5 h-5">
+                                <img class="rounded-full" src="${article.authorImageLink}" alt="Auteur">
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-gray-800">
+                                    ${article.authorPseudo}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        `;
 
-        console.log(res)
-    }
+            container.appendChild(articleElement);
+        });
+    };
 
-    getArticles()
+    getArticles();
 
     function sortNews() {
         const order = document.getElementById('sortOrder').value;
