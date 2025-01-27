@@ -60,56 +60,7 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
     </div>
 </nav>
 
-<div id="newsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
-    <?php foreach ([] as $article) : ?>
-        <div class="news-item flex gap-0 justify-between sm:gap-4 md:gap-4 mb-5 w-full"
-             data-tags="<?= implode(',', array_map(static fn($tag) => $tag->getName(), $article->getTags())) ?>"
-             data-date="<?= $article->getDateCreated() ?>">
-            <a href="<?= EnvManager::getInstance()->getValue('PATH_SUBFOLDER') ?>news/<?= $article->getSlug() ?>"
-               class="block w-[90%] rounded-lg relative">
-                <div class="rounded-lg overflow-hidden mx-auto">
-                    <?php
-                    $tagOffset = 1; // Départ initial pour la position des tags
-                    foreach ($article->getTags() as $tag): ?>
-                        <div class="absolute bg-gray-300 opacity-90 text-white text-xs rounded-2xl px-2 py-1"
-                             style="top: <?= $tagOffset ?>rem; left: 0.5rem;">
-                            <?= $tag->getName(); ?>
-                        </div>
-                        <?php $tagOffset += 2; // Incrémenter pour espacer chaque tag ?>
-                    <?php endforeach; ?>
-
-                    <img class="w-full h-48 object-cover"
-                         src="<?= $article->getImageLink() ?: EnvManager::getInstance()->getValue("DEFAULT_IMAGE_PATH") ?>"
-                         alt="Image de l'article">
-
-                    <div class="p-4">
-                    <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                        <?= date('d-M-Y', strtotime($article->getDateCreated())) ?>
-                    </span>
-                        <h2 class="text-lg font-semibold text-gray-800 mt-2">
-                            <?= $article->getTitle(); ?>
-                        </h2>
-                        <p class="text-sm text-gray-600 mt-2">
-                            <?= $article->getDescription(); ?>
-                        </p>
-                        <div class="flex items-center mt-4">
-                            <div class="flex-shrink-0 w-5 h-5">
-                                <img class="rounded-full"
-                                     src="<?= $article->getAuthor()?->getUserPicture()?->getImage() ?: EnvManager::getInstance()->getValue("DEFAULT_PROFILE_PICTURE") ?>"
-                                     alt="Auteur">
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm font-medium text-gray-800">
-                                    <?= $article->getAuthor()?->getPseudo() ?: 'Auteur inconnu'; ?>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-    <?php endforeach; ?>
-</div>
+<div id="newsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto"></div>
 <!--<div class="flex pagination justify-center gap-8">
     <?php /*if ($page > 1): */ ?>
         <a href="?page=<?php /*= $page - 1 */ ?>&order=<?php /*= $order */ ?>&tag=<?php /*= $selectedTag */ ?>" class="prev"><i
@@ -139,7 +90,9 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
         const res = await req.json();
 
         const container = document.getElementById('newsContainer');
-        container.innerHTML = ''; // Clear the container
+        container.innerHTML = '';
+
+
 
         if (res.news === undefined) {
             container.appendChild(document.createTextNode('Aucun article trouvé'));
@@ -151,41 +104,47 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
             const articleElement = document.createElement('div');
             articleElement.className = 'news-item flex gap-0 justify-between sm:gap-4 md:gap-4 mb-5 w-full';
             articleElement.setAttribute('data-tags', article.tags.join(','));
-            articleElement.setAttribute('data-date', article.dateCreated);
+
+            let tagOffset = 1; // Départ initial pour la position des tags
+            let tagsHTML = article.tags.map(tag => {
+                const tagHTML = `
+            <div class="absolute bg-gray-300 opacity-90 text-white text-xs rounded-2xl px-2 py-1" style="top: ${tagOffset}rem; left: 0.5rem;">
+                ${tag}
+            </div>
+        `;
+                tagOffset += 2; // Incrémenter pour espacer chaque tag
+                return tagHTML;
+            }).join('');
 
             articleElement.innerHTML = `
-            <a href="${article.articleLink}" class="block w-[90%] rounded-lg relative">
-                <div class="rounded-lg overflow-hidden mx-auto">
-                    ${article.tags.map(tag => `
-                        <div class="absolute bg-gray-300 opacity-90 text-white text-xs rounded-2xl mt-2 ml-0 px-2 py-1">
-                            ${tag}
+        <a href="${article.articleLink}" class="block w-[90%] rounded-lg relative">
+            <div class="rounded-lg overflow-hidden mx-auto">
+                ${tagsHTML}
+                <img class="w-full h-48 object-cover" src="${article.imageLink}" alt="Image de l'article">
+                <div class="p-4">
+                    <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                        ${article.dateCreated}
+                    </span>
+                    <h2 class="text-lg font-semibold text-gray-800 mt-2">
+                        ${article.title}
+                    </h2>
+                    <p class="text-sm text-gray-600 mt-2">
+                        ${article.description}
+                    </p>
+                    <div class="flex items-center mt-4">
+                        <div class="flex-shrink-0 w-5 h-5">
+                            <img class="rounded-full" src="${article.authorImageLink}" alt="Auteur">
                         </div>
-                    `).join('')}
-                    <img class="w-full h-48 object-cover" src="${article.imageLink}" alt="Image de l'article">
-                    <div class="p-4">
-                        <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                            ${article.dateCreated}
-                        </span>
-                        <h2 class="text-lg font-semibold text-gray-800 mt-2">
-                            ${article.title}
-                        </h2>
-                        <p class="text-sm text-gray-600 mt-2">
-                            ${article.description}
-                        </p>
-                        <div class="flex items-center mt-4">
-                            <div class="flex-shrink-0 w-5 h-5">
-                                <img class="rounded-full" src="${article.authorImageLink}" alt="Auteur">
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm font-medium text-gray-800">
-                                    ${article.authorPseudo}
-                                </p>
-                            </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-800">
+                                ${article.authorPseudo}
+                            </p>
                         </div>
                     </div>
                 </div>
-            </a>
-        `;
+            </div>
+        </a>
+    `;
 
             container.appendChild(articleElement);
         });
