@@ -78,8 +78,8 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
     <?php /*endif; */ ?>
 </div>-->
 <script>
-    const getArticles = async () => {
-        const req = await fetch('<?= EnvManager::getInstance()->getValue('PATH_URL') ?>api/news', {
+    const getArticles = async (order = 'DESC') => {
+        const req = await fetch(`<?= EnvManager::getInstance()->getValue('PATH_URL') ?>api/news?order=${order}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -92,8 +92,6 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
         const container = document.getElementById('newsContainer');
         container.innerHTML = '';
 
-
-
         if (res.news === undefined) {
             container.appendChild(document.createTextNode('Aucun article trouvé'));
             return;
@@ -105,11 +103,12 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
             articleElement.className = 'news-item flex gap-0 justify-between sm:gap-4 md:gap-4 mb-5 w-full';
             articleElement.setAttribute('data-tags', article.tags.join(','));
 
+
             let tagOffset = 1; // Départ initial pour la position des tags
             let tagsHTML = article.tags.map(tag => {
                 const tagHTML = `
             <div class="absolute bg-gray-300 opacity-90 text-white text-xs rounded-2xl px-2 py-1" style="top: ${tagOffset}rem; left: 0.5rem;">
-                ${tag}
+                ${tag.name}
             </div>
         `;
                 tagOffset += 2; // Incrémenter pour espacer chaque tag
@@ -154,21 +153,7 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
 
     function sortNews() {
         const order = document.getElementById('sortOrder').value;
-        const newsContainer = document.getElementById('newsContainer');
-        const newsItems = Array.from(newsContainer.getElementsByClassName('news-item'));
-
-        newsItems.sort((a, b) => {
-            const dateA = new Date(a.getAttribute('data-date'));
-            const dateB = new Date(b.getAttribute('data-date'));
-
-            if (order === 'ASC') {
-                return dateA - dateB;
-            } else {
-                return dateB - dateA;
-            }
-        });
-
-        newsItems.forEach(item => newsContainer.appendChild(item));
+        getArticles(order);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
