@@ -11,7 +11,7 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
 ?>
 <div class="mt-20 sm:mt-0 hero-section relative">
     <div class="mx-auto shadow-md rounded-lg overflow-hidden relative">
-        <img class="max-w-52 max-h-52 object-cover aspect-square sm:aspect-auto object-center"
+        <img class="mx-auto w-full h-96 rounded object-cover"
              alt="Background"
              src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/photo-background.png' ?>">
         <div class="absolute bottom-5 left-5 text-white text-shadow-lg flex flex-col items-start ">
@@ -60,36 +60,45 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
     </div>
 </nav>
 
-<div id="newsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto"></div>
-<!--<div class="flex pagination justify-center gap-8">
-    <?php /*if ($page > 1): */ ?>
-        <a href="?page=<?php /*= $page - 1 */ ?>&order=<?php /*= $order */ ?>&tag=<?php /*= $selectedTag */ ?>" class="prev"><i
-                class="fa-solid fa-chevron-left"></i></a>
-    <?php /*endif; */ ?>
-
-    <?php /*for ($i = 1; $i <= $totalPages; $i++): */ ?>
-        <a href="?page=<?php /*= $i */ ?>&order=<?php /*= $order */ ?>&tag=<?php /*= $selectedTag */ ?>"
-           class="<?php /*= $i == $page ? 'bg-gray-500 font-bold' : '' */ ?>"><?php /*= $i */ ?></a>
-    <?php /*endfor; */ ?>
-
-    <?php /*if ($page < $totalPages): */ ?>
-        <a href="?page=<?php /*= $page + 1 */ ?>&order=<?php /*= $order */ ?>&tag=<?php /*= $selectedTag */ ?>" class="next"><i
-                class="fa-solid fa-chevron-right"></i></a>
-    <?php /*endif; */ ?>
-</div>-->
+<div id="newsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl w-full mx-auto"></div>
+<div class="flex pagination justify-center gap-8 mt-4">
+    <button id="prevPage" class="prev bg-gray-300 px-4 py-2 rounded" onclick="changePage('prev')">Précédent</button>
+    <span id="currentPage" class="px-4 py-2"></span>
+    <button id="nextPage" class="next bg-gray-300 px-4 py-2 rounded" onclick="changePage('next')">Suivant</button>
+</div>
 <script>
-    const getArticles = async (order = 'DESC') => {
-        const req = await fetch(`<?= EnvManager::getInstance()->getValue('PATH_URL') ?>api/news?order=${order}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }
-        );
+    let currentPage = 1;
+    const limit = 9;
+    let activeTag = 'all';
+
+    const getArticles = async (page = 1, order = 'DESC', tag="all") => {
+        const container = document.getElementById('newsContainer');
+        container.innerHTML = `
+        <div class="mx-auto w-full max-w-sm rounded-md border border-gray-500 p-4">
+            <div class="flex animate-pulse space-x-4">
+                <div class="flex-1 space-y-6 py-2">
+                    <div class="h-48 rounded bg-gray-200"></div>
+                    <div class="space-y-3">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="col-span-1 h-2 rounded bg-gray-200"></div>
+                            <div class="col-span-2 h-2 rounded bg-gray-200"></div>
+                        </div>
+                        <div class="w-10 h-2 rounded bg-gray-200"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+        const req = await fetch(`<?= EnvManager::getInstance()->getValue('PATH_URL') ?>api/news/${page}/?limit=${limit}&order=${order}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
 
         const res = await req.json();
-
-        const container = document.getElementById('newsContainer');
+        container.classList.remove('animate-pulse');
         container.innerHTML = '';
 
         if (res.news === undefined) {
@@ -100,115 +109,97 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
         const articles = res.news;
         articles.forEach((article) => {
             const articleElement = document.createElement('div');
-            articleElement.className = 'news-item flex gap-0 justify-between sm:gap-4 md:gap-4 mb-5 w-full';
-            articleElement.setAttribute('data-tags', article.tags.join(','));
+            articleElement.className = 'flex news-item flex gap-0 justify-center sm:gap-4 md:gap-4 mb-5 w-full';
+            articleElement.setAttribute('data-tags', article.tags.map(tag => tag.name).join(','));
 
-
-            let tagOffset = 1; // Départ initial pour la position des tags
+            let tagOffset = 1;
             let tagsHTML = article.tags.map(tag => {
                 const tagHTML = `
-            <div class="absolute bg-gray-300 opacity-90 text-white text-xs rounded-2xl px-2 py-1" style="top: ${tagOffset}rem; left: 0.5rem;">
-                ${tag.name}
-            </div>
-        `;
-                tagOffset += 2; // Incrémenter pour espacer chaque tag
+                <div class="absolute bg-gray-300 opacity-90 text-white text-xs rounded-2xl px-2 py-1" style="top: ${tagOffset}rem; left: 0.5rem;">
+                    ${tag.name}
+                </div>
+            `;
+                tagOffset += 2;
                 return tagHTML;
             }).join('');
 
             articleElement.innerHTML = `
-        <a href="${article.articleLink}" class="block w-[90%] rounded-lg relative">
-            <div class="rounded-lg overflow-hidden mx-auto">
-                ${tagsHTML}
-                <img class="w-full h-48 object-cover" src="${article.imageLink}" alt="Image de l'article">
-                <div class="p-4">
-                    <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                        ${article.dateCreated}
-                    </span>
-                    <h2 class="text-lg font-semibold text-gray-800 mt-2">
-                        ${article.title}
-                    </h2>
-                    <p class="text-sm text-gray-600 mt-2">
-                        ${article.description}
-                    </p>
-                    <div class="flex items-center mt-4">
-                        <div class="flex-shrink-0 w-5 h-5">
-                            <img class="rounded-full" src="${article.authorImageLink}" alt="Auteur">
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-gray-800">
-                                ${article.authorPseudo}
-                            </p>
+            <a href="${article.articleLink}" class="block w-[90%] rounded-lg relative">
+                <div class="mx-auto w-full object-cover">
+                    ${tagsHTML}
+                    <img class="mx-auto w-full h-48 rounded object-cover" src="${article.imageLink}" alt="Image de l'article">
+                    <div class="p-4">
+                        <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                            ${article.dateCreated}
+                        </span>
+                        <h2 class="text-lg font-semibold text-gray-800 mt-2">
+                            ${article.title}
+                        </h2>
+                        <p class="text-sm text-gray-600 mt-2">
+                            ${article.description}
+                        </p>
+                        <div class="flex items-center mt-4">
+                            <div class="flex-shrink-0 w-5 h-5">
+                                <img class="rounded-full" src="${article.authorImageLink}" alt="Auteur">
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-gray-800">
+                                    ${article.authorPseudo}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </a>
-    `;
+            </a>
+        `;
 
-            container.appendChild(articleElement);
+            if (tag === 'all' || article.tags.some(t => t.name === tag)) {
+                container.appendChild(articleElement);
+            }
         });
+
+        document.getElementById('currentPage').textContent = `Page ${page}`;
     };
 
-    getArticles();
+    const changePage = (direction) => {
+        const sortOrder = document.getElementById('sortOrder').value;
+        if (direction === 'prev' && currentPage > 1) {
+            currentPage--;
+        } else if (direction === 'next') {
+            currentPage++;
+        }
+        getArticles(currentPage, sortOrder, activeTag);
+    };
 
-    function sortNews() {
-        const order = document.getElementById('sortOrder').value;
-        getArticles(order);
-    }
+    const setActiveTag = (tag) => {
+        activeTag = tag;
+        currentPage = 1; // Reset to the first page when the tag changes
+        document.querySelectorAll('.tag-filter').forEach(el => {
+            el.classList.remove('font-semibold');
+            if (el.getAttribute('data-tag') === tag) {
+                el.classList.add('font-semibold');
+            }
+        });
+        getArticles(currentPage, document.getElementById('sortOrder').value, tag);
+    };
 
     document.addEventListener('DOMContentLoaded', () => {
-        const tagFilters = document.querySelectorAll('.tag-filter');
-        const newsItems = document.querySelectorAll('.news-item');
-        const tagSelect = document.getElementById('tagSelect');
+        getArticles(currentPage);
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const initialTag = urlParams.get('tag') || 'all';
-        filterNews(initialTag);
-        updateTagFilterUI(initialTag);
+        const sortOrder = document.getElementById('sortOrder');
+        sortOrder.addEventListener('change', () => {
+            getArticles(currentPage, sortOrder.value, activeTag);
+        });
 
-        tagFilters.forEach(filter => {
-            filter.addEventListener('click', (e) => {
+        document.querySelectorAll('.tag-filter').forEach(el => {
+            el.addEventListener('click', (e) => {
                 e.preventDefault();
-                const tag = filter.getAttribute('data-tag');
-                filterNews(tag);
-                updateTagFilterUI(tag);
-                updateURL(tag);
+                setActiveTag(el.getAttribute('data-tag'));
             });
         });
 
-        if (tagSelect) {
-            tagSelect.addEventListener('change', () => {
-                const tag = tagSelect.value;
-                filterNews(tag);
-                updateURL(tag);
-            });
-        }
-
-        function filterNews(tag) {
-            newsItems.forEach(item => {
-                const tags = item.getAttribute('data-tags').split(',');
-                if (tag === 'all' || tags.includes(tag)) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-
-        function updateURL(tag) {
-            const urlParams = new URLSearchParams(window.location.search);
-            urlParams.set('tag', tag);
-            window.history.replaceState(null, null, "?" + urlParams.toString());
-        }
-
-        function updateTagFilterUI(tag) {
-            tagFilters.forEach(f => {
-                f.classList.remove('font-bold');
-            });
-            const activeFilter = document.querySelector(`.tag-filter[data-tag="${tag}"]`);
-            if (activeFilter) {
-                activeFilter.classList.add('font-bold');
-            }
-        }
+        document.getElementById('tagSelect').addEventListener('change', (e) => {
+            setActiveTag(e.target.value);
+        });
     });
 </script>
