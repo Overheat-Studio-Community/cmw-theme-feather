@@ -4,6 +4,7 @@ use CMW\Manager\Env\EnvManager;
 use CMW\Model\News\NewsTagsModel;
 use CMW\Utils\Website;
 
+
 $tags = NewsTagsModel::getInstance()->getTags();
 
 Website::setTitle('Accueil');
@@ -28,10 +29,10 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
     Vous trouverez ici les derniers blogs disponibles et mis en ligne.
 </h3>
 <nav class="z-30 flex my-2 items-center">
-    <a href="#" class="tag-filter hidden md:block rounded mr-2 px-4 py-2 text-black" data-tag="all">All</a>
+    <a href="#" class="tag-filter hidden md:block rounded mr-2 px-4 py-2 text-black">All</a>
     <?php foreach ($tags as $tag) : ?>
         <a href="#" class="tag-filter hidden md:block rounded mr-2 px-4 py-2 bg-white text-black"
-           data-tag="<?= $tag->getName() ?>">
+           data-tag="<?= $tag->getId() ?>">
             <?= $tag->getName() ?>
         </a>
     <?php endforeach; ?>
@@ -69,28 +70,33 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
 <script>
     let currentPage = 1;
     const limit = 9;
-    let activeTag = 'all';
+    let activeTag = null;
 
-    const getArticles = async (page = 1, order = 'DESC', tag="all") => {
+    const getArticles = async (page = 1, order = 'DESC', tag = null) => {
         const container = document.getElementById('newsContainer');
         container.innerHTML = `
-        <div class="mx-auto w-full max-w-sm rounded-md border border-gray-500 p-4">
-            <div class="flex animate-pulse space-x-4">
-                <div class="flex-1 space-y-6 py-2">
-                    <div class="h-48 rounded bg-gray-200"></div>
-                    <div class="space-y-3">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="col-span-1 h-2 rounded bg-gray-200"></div>
-                            <div class="col-span-2 h-2 rounded bg-gray-200"></div>
-                        </div>
-                        <div class="w-10 h-2 rounded bg-gray-200"></div>
+    <div class="mx-auto w-full max-w-sm rounded-md border border-gray-500 p-4">
+        <div class="flex animate-pulse space-x-4">
+            <div class="flex-1 space-y-6 py-2">
+                <div class="h-48 rounded bg-gray-200"></div>
+                <div class="space-y-3">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-1 h-2 rounded bg-gray-200"></div>
+                        <div class="col-span-2 h-2 rounded bg-gray-200"></div>
                     </div>
+                    <div class="w-10 h-2 rounded bg-gray-200"></div>
                 </div>
             </div>
         </div>
+    </div>
     `;
 
-        const req = await fetch(`<?= EnvManager::getInstance()->getValue('PATH_URL') ?>api/news/${page}/?limit=${limit}&order=${order}`, {
+        let url = `<?= EnvManager::getInstance()->getValue('PATH_URL') ?>api/news/page/${page}/?limit=${limit}&order=${order}`;
+        if (tag !== null) {
+            url += `&tag=${tag}`;
+        }
+
+        const req = await fetch(url, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -101,59 +107,63 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
         container.classList.remove('animate-pulse');
         container.innerHTML = '';
 
-        if (res.news === undefined) {
-            container.appendChild(document.createTextNode('Aucun article trouvé'));
+        if (res.news === undefined || res.news.length === 0) {
+            if (page > 1) {
+                currentPage--;
+                getArticles(currentPage, order, tag);
+            } else {
+                container.appendChild(document.createTextNode('Aucun article trouvé'));
+            }
             return;
         }
 
         const articles = res.news;
         articles.forEach((article) => {
-            const articleElement = document.createElement('div');
+            let articleElement = document.createElement('div');
             articleElement.className = 'flex news-item flex gap-0 justify-center sm:gap-4 md:gap-4 mb-5 w-full';
             articleElement.setAttribute('data-tags', article.tags.map(tag => tag.name).join(','));
 
             let tagOffset = 1;
             let tagsHTML = article.tags.map(tag => {
-                const tagHTML = `
-                <div class="absolute bg-gray-300 opacity-90 text-white text-xs rounded-2xl px-2 py-1" style="top: ${tagOffset}rem; left: 0.5rem;">
-                    ${tag.name}
-                </div>
-            `;
+                let tagHTML = `
+            <div class="absolute bg-gray-300 opacity-90 text-white text-xs rounded-2xl px-2 py-1" style="top: ${tagOffset}rem; left: 0.5rem;">
+                ${tag.name}
+            </div>
+        `;
                 tagOffset += 2;
                 return tagHTML;
             }).join('');
-
             articleElement.innerHTML = `
-            <a href="${article.articleLink}" class="block w-[90%] rounded-lg relative">
-                <div class="mx-auto w-full object-cover">
-                    ${tagsHTML}
-                    <img class="mx-auto w-full h-48 rounded object-cover" src="${article.imageLink}" alt="Image de l'article">
-                    <div class="p-4">
-                        <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                            ${article.dateCreated}
-                        </span>
-                        <h2 class="text-lg font-semibold text-gray-800 mt-2">
-                            ${article.title}
-                        </h2>
-                        <p class="text-sm text-gray-600 mt-2">
-                            ${article.description}
-                        </p>
-                        <div class="flex items-center mt-4">
-                            <div class="flex-shrink-0 w-5 h-5">
-                                <img class="rounded-full" src="${article.authorImageLink}" alt="Auteur">
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm font-medium text-gray-800">
-                                    ${article.authorPseudo}
-                                </p>
-                            </div>
+        <a href="${article.articleLink}" class="block w-[90%] rounded-lg relative">
+            <div class="mx-auto w-full object-cover">
+                ${tagsHTML}
+                <img class="mx-auto w-full h-48 rounded object-cover" src="${article.imageLink}" alt="Image de l'article">
+                <div class="p-4">
+                    <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                        ${article.dateCreated}
+                    </span>
+                    <h2 class="text-lg font-semibold text-gray-800 mt-2">
+                        ${article.title}
+                    </h2>
+                    <p class="text-sm text-gray-600 mt-2">
+                        ${article.description}
+                    </p>
+                    <div class="flex items-center mt-4">
+                        <div class="flex-shrink-0 w-5 h-5">
+                            <img class="rounded-full" src="${article.authorImageLink}" alt="Auteur">
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-800">
+                                ${article.authorPseudo}
+                            </p>
                         </div>
                     </div>
                 </div>
-            </a>
-        `;
+            </div>
+        </a>
+    `;
 
-            if (tag === 'all' || article.tags.some(t => t.name === tag)) {
+            if (tag === null || article.tags.some(t => t.id === parseInt(tag))) {
                 container.appendChild(articleElement);
             }
         });
@@ -168,6 +178,7 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
         } else if (direction === 'next') {
             currentPage++;
         }
+
         getArticles(currentPage, sortOrder, activeTag);
     };
 

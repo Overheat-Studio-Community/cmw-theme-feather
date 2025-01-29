@@ -11,12 +11,6 @@ use CMW\Model\News\NewsTagsModel;
 
 $subfolder = EnvManager::getInstance()->getValue('PATH_SUBFOLDER');
 
-/* @var NewsEntity $news */
-$firstTag = $news->getTags()[0] ?? null;
-
-$newsLists = new NewsModel();
-$newsList = $newsLists->getSomeNews(3, 'DESC');
-
 /* TITRE ET DESCRIPTION */
 Website::setTitle($news->getTitle());
 Website::setDescription($news->getDescription());
@@ -62,7 +56,7 @@ Website::setDescription($news->getDescription());
 
             <!-- Barre latérale sticky -->
             <aside class="top-20">
-                <div class=" mt-2 fixed bg-gray-50 py-2 px-6 rounded max-h-10">
+                <div class=" mt-2 fixed py-2 px-6 rounded max-h-10">
                     <h3 class="text-md font-semibold mb-2">À propos de l'auteur</h3>
                     <div class="flex text-gray-600 items-center gap-2 text-sm">
                         <img class="w-8 h-8 rounded-full"
@@ -146,7 +140,7 @@ Website::setDescription($news->getDescription());
         $relatedNews = [];
         if ($firstTag) {
             // Récupérer tous les articles liés à ce tag
-            $allRelatedNews = NewsTagsModel::getInstance()->getNewsForTagById($firstTag->getId());
+            $allRelatedNews = NewsTagsModel::getInstance()->getNewsForTagById($firstTag->getId(), 4, 'DESC');
 
             // Trier les articles par date décroissante
             usort($allRelatedNews, function ($a, $b) {
