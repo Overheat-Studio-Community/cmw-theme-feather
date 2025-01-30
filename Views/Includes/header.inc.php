@@ -32,28 +32,28 @@ $menus = MenusModel::getInstance();
         </ul>
 
         <!-- Recherche -->
-        <div class="sm:bg-white max-w-[400px] justify-center flex items-center rounded-lg overflow-hidden"
-             id="search-container">
-
-            <input type="search"
-                   class="hidden sm:flex sm:flex-grow px-4 py-2 text-black focus:outline-none transition-all duration-300 max-w-[200px] w-full"
-                   placeholder="Search" aria-label="Search" id="search-input" aria-describedby="button-addon2"/>
-            <span class="hidden sm:flex items-center justify-center px-4 cursor-pointer">
-                <i class="fa-solid fa-magnifying-glass text-black"></i>
-            </span>
-
-            <span class="sm:hidden flex items-center justify-center px-4 cursor-pointer" id="button-addon2"
-                  onclick="toggleSearchBar()">
-                <i class="fa-solid fa-magnifying-glass text-black"></i>
-            </span>
-            <!-- Croix de fermeture -->
-            <span
-                class="hidden flex items-center justify-center px-4 cursor-pointer text-black"
-                id="close-search-btn"
-                onclick="closeSearchBar()"
-            >
-                <i class="fa-solid fa-xmark"></i>
-            </span>
+        <div>
+            <div class="sm:bg-white max-w-[400px] justify-center flex items-center rounded-lg overflow-hidden"
+                 id="search-container">
+                <input type="search"
+                       class="hidden sm:flex sm:flex-grow px-4 py-2 text-black focus:outline-none transition-all duration-300 max-w-[200px] w-full"
+                       placeholder="Search" aria-label="Search" id="search-input" aria-describedby="button-addon2"/>
+                <span class="hidden sm:flex items-center justify-center px-4 cursor-pointer">
+                    <i class="fa-solid fa-magnifying-glass text-black"></i>
+                </span>
+                <span class="sm:hidden flex items-center justify-center px-4 cursor-pointer" id="button-addon2"
+                      onclick="toggleSearchBar()">
+                    <i class="fa-solid fa-magnifying-glass text-black"></i>
+                </span>
+                <!-- Croix de fermeture -->
+                <span class="hidden flex items-center justify-center px-4 cursor-pointer text-black"
+                      id="close-search-btn" onclick="closeSearchBar()">
+                    <i class="fa-solid fa-xmark"></i>
+                </span>
+            </div>
+            <!-- Conteneur pour les résultats de recherche -->
+            <div id="search-results-container"
+                 class="hidden absolute w-full sm:max-w-[400px] sm:mt-0 min-w-max bg-white shadow-lg rounded-lg mt-10 z-50"></div>
         </div>
 
         <!-- Profile -->
@@ -78,10 +78,10 @@ $menus = MenusModel::getInstance();
                         <i class="fa-regular fa-address-card"></i> Profile
                     </a>
                     <?php if (UsersController::isAdminLogged()) : ?>
-                    <a href="<?= $subfolder ?>cmw-admin"
-                       class="block px-4 py-2 text-black hover:bg-gray-100">
-                        <i class="fa-solid fa-screwdriver-wrench"></i> Administration
-                    </a>
+                        <a href="<?= $subfolder ?>cmw-admin"
+                           class="block px-4 py-2 text-black hover:bg-gray-100">
+                            <i class="fa-solid fa-screwdriver-wrench"></i> Administration
+                        </a>
                     <?php endif; ?>
                     <a href="<?= $subfolder ?>logout"
                        class="block px-4 py-2 text-newred hover:bg-gray-100">
@@ -205,4 +205,67 @@ $menus = MenusModel::getInstance();
         }
     });
 
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('button-addon2');
+        const searchResultsContainer = document.getElementById('search-results-container');
+        const closeBtn = document.getElementById('close-search-btn');
+
+        const displayResults = (results) => {
+            searchResultsContainer.innerHTML = '';
+            if (results.length === 0) {
+                searchResultsContainer.innerHTML = '<p class="p-4 text-gray-500">No results found</p>';
+                return;
+            }
+            results.forEach(result => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'p-4 border-b border-gray-200 max-w-[400px]';
+                resultItem.innerHTML = `
+                <a href="${result.articleLink}" class="block max-w-sm text-black hover:bg-gray-100">
+                    <h3 class="font-semibold">${result.title}</h3>
+                    <p class="text-sm text-gray-600">${result.description}</p>
+                </a>
+            `;
+                searchResultsContainer.appendChild(resultItem);
+            });
+            searchResultsContainer.classList.remove('hidden');
+        };
+
+        const searchNews = async (query) => {
+            const encodedQuery = btoa(query); // Encode the query in base64
+            const response = await fetch(`<?= EnvManager::getInstance()->getValue('PATH_URL') ?>api/news/search/${encodedQuery}`);
+            const data = await response.json();
+            displayResults(data.news);
+        };
+
+        if (searchInput && searchButton) {
+            searchButton.addEventListener('click', () => {
+                const query = searchInput.value.trim();
+                if (query) {
+                    searchNews(query);
+                }
+            });
+
+            searchInput.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    const query = searchInput.value.trim();
+                    if (query) {
+                        searchNews(query);
+                    }
+                }
+            });
+
+            closeBtn.addEventListener('click', () => {
+                searchResultsContainer.classList.add('hidden');
+            });
+
+            document.addEventListener('click', (event) => {
+                if (!searchInput.contains(event.target) && !searchResultsContainer.contains(event.target)) {
+                    searchResultsContainer.classList.add('hidden');
+                }
+            });
+        }
+    });
 </script>
