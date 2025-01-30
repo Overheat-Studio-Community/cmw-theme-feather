@@ -6,7 +6,6 @@ use CMW\Manager\Env\EnvManager;
 use CMW\Model\Core\MenusModel;
 use CMW\Utils\Website;
 
-
 $subfolder = EnvManager::getInstance()->getValue('PATH_SUBFOLDER');
 $usersession = UsersSessionsController::getInstance()->getCurrentUser();
 $userlog = UsersController::isUserLogged();
@@ -33,10 +32,10 @@ $menus = MenusModel::getInstance();
 
         <!-- Recherche -->
         <div>
-            <div class="sm:bg-white max-w-[400px] justify-center flex items-center rounded-lg overflow-hidden"
+            <div class="sm:bg-white w-full justify-center flex items-center rounded-lg overflow-hidden"
                  id="search-container">
                 <input type="search"
-                       class="hidden sm:flex sm:flex-grow px-4 py-2 text-black focus:outline-none transition-all duration-300 max-w-[200px] w-full"
+                       class="hidden w-full sm:flex sm:flex-grow px-4 py-2 text-black focus:outline-none transition-all duration-300 max-w-[400px]"
                        placeholder="Search" aria-label="Search" id="search-input" aria-describedby="button-addon2"/>
                 <span class="hidden sm:flex items-center justify-center px-4 cursor-pointer">
                     <i class="fa-solid fa-magnifying-glass text-black"></i>
@@ -53,7 +52,7 @@ $menus = MenusModel::getInstance();
             </div>
             <!-- Conteneur pour les résultats de recherche -->
             <div id="search-results-container"
-                 class="hidden absolute w-full sm:max-w-[400px] sm:mt-0 min-w-max bg-white shadow-lg rounded-lg mt-10 z-50"></div>
+                 class="hidden absolute w-full sm:max-w-[16rem] sm:mt-2 min-w-max bg-white shadow-lg rounded-lg mt-12 z-50"></div>
         </div>
 
         <!-- Profile -->
@@ -221,9 +220,9 @@ $menus = MenusModel::getInstance();
             }
             results.forEach(result => {
                 const resultItem = document.createElement('div');
-                resultItem.className = 'p-4 border-b border-gray-200 max-w-[400px]';
+                resultItem.className = 'p-4 border-b border-gray-200';
                 resultItem.innerHTML = `
-                <a href="${result.articleLink}" class="block max-w-sm text-black hover:bg-gray-100">
+                <a href="${result.articleLink}" class="block text-black hover:bg-gray-100">
                     <h3 class="font-semibold">${result.title}</h3>
                     <p class="text-sm text-gray-600">${result.description}</p>
                 </a>
