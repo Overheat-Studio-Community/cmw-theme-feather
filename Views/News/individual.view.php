@@ -25,7 +25,7 @@ Website::setDescription($news->getDescription());
         <div class="flex flex-col md:flex-row">
             <!-- Contenu principal -->
             <article class="flex-1 flex flex-col space-y-4">
-                <div class="article-content break-words overflow-hidden text-wrap max-w-xl">
+                <div class="article-content break-words overflow-hidden text-wrap max-w-xl bg-gray-300">
                     <p class="text-wrap"><?= $news->getContent() ?></p>
                 </div>
 

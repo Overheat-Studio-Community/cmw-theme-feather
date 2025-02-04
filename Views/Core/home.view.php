@@ -3,6 +3,7 @@
 use CMW\Manager\Env\EnvManager;
 use CMW\Model\News\NewsTagsModel;
 use CMW\Utils\Website;
+use CMW\Model\Core\ThemeModel;
 
 
 $tags = NewsTagsModel::getInstance()->getTags();
@@ -12,12 +13,13 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
 ?>
 <div class="mt-20 sm:mt-0 hero-section relative">
     <div class="mx-auto shadow-md rounded-lg overflow-hidden relative">
-        <img class="mx-auto w-full h-96 rounded object-cover"
+        <img class="mx-auto w-full h-[400px] rounded object-cover"
              alt="Background"
              src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/photo-background.png' ?>">
-        <div class="absolute bottom-5 left-5 text-white text-shadow-lg flex flex-col items-start ">
-            <h2 class="text-2xl font-bold z-[1]"><?= "Titre du dernier blog" ?></h2>
-            <p class="leading-4 text-base mt-0 sm:ml- md:max-w-80 xl:max-w-96 sm:mt-2 sm:ml-0 z-[1]"><?="Description du dernier blog" ?></p>
+        <div class="absolute bottom-5 left-5 text-shadow-lg flex flex-col items-start">
+            <h2 class="text-2xl font-bold z-[1]" style="color: <?= ThemeModel::getInstance()->fetchConfigValue('title-color') ?>">
+                <?= ThemeModel::getInstance()->fetchConfigValue('title-text') ?></h2>
+            <p class="leading-4 text-base mt-0 sm:ml- md:max-w-80 xl:max-w-96 sm:mt-2 sm:ml-0 z-[1]" style="color: <?= ThemeModel::getInstance()->fetchConfigValue('description-color')?>"><?= ThemeModel::getInstance()->fetchConfigValue('description-text') ?></p>
             <div class="absolute inset-0 bg-black/25 blur-xl"></div>
         </div>
     </div>

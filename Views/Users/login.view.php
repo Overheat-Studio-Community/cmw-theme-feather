@@ -153,7 +153,7 @@ Website::setDescription('Connectez-vous à votre compte ' . Website::getWebsiteN
                 <?php endif; ?>
                 <?php SecurityController::getPublicData(); ?>
                 <button
-                    class="flex items-center justify-center bg-black text-white rounded-lg py-2 mx-auto w-full"
+                    class="flex items-center justify-center bg-black text-white rounded-lg py-2 mt-2 mx-auto w-full"
                     type="submit">
                     Sign In
                 </button>
