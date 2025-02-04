@@ -13,6 +13,7 @@ use CMW\Controller\Core\PackageController;
         <button data-tabs-target="#tab4" role="tab">Pied de page</button>
         <button data-tabs-target="#tab2" role="tab">HomePage</button>
         <button data-tabs-target="#tab3" role="tab">News</button>
+        <button data-tabs-target="#tab6" role="tab">Blog</button>
 
 
     </ul>
@@ -36,6 +37,7 @@ En tête et Global
         <label>Logo global</label>
         <img class="w-25" src="<?= ThemeModel::getInstance()->fetchImageLink("logo-global") ?>"
              alt="Image introuvable !">
+    </div>
 </div>
 <div class="tab-content" id="tab2">
     <h1>Titre</h1>
@@ -63,9 +65,28 @@ En tête et Global
                value="<?= ThemeModel::getInstance()->fetchConfigValue('description-text') ?>">
 
     </div>
+    <div>
+        <h5>Image de fond</h5>
+        <div class="grid-2">
+            <div class="flex justify-center">
+                <img class="w-25" src="<?= ThemeModel::getInstance()->fetchImageLink("img-hero") ?>"
+                     alt="Image introuvable !">
+            </div>
+            <div class="drop-img-area mt-4" data-input-name="img-hero"></div>
+        </div>
+    </div>
 </div>
 <div class="tab-content" id="tab3">
     <h1>News</h1>
+    <h5>Couleur de fond du texte</h5>
+    <input class=""
+           type="color" name="news-bg-color" id="news-bg-color"
+           value="<?= ThemeModel::getInstance()->fetchConfigValue('news-bg-color') ?>">
+    <h5>Couleur du texte</h5>
+    <input class=""
+           type="color" name="news-text-color" id="news-text-color"
+           value="<?= ThemeModel::getInstance()->fetchConfigValue('news-text-color') ?>">
+
 </div>
 
 <div class="tab-content" id="tab4">
@@ -106,6 +127,9 @@ En tête et Global
     <input class=""
            type="color" name="subscribe-text-color" id="subscribe-text-color"
            value="<?= ThemeModel::getInstance()->fetchConfigValue('subscribe-text-color') ?>">
+</div>
+<div class="tab-content" id="tab6">
+    <h1>Blog</h1>
 </div>
 <div class="tab-content" id="tab5">
     <h1>Haut de page</h1>

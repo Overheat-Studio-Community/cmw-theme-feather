@@ -8,14 +8,16 @@ use CMW\Model\Core\ThemeModel;
 
 $tags = NewsTagsModel::getInstance()->getTags();
 
+
+
 Website::setTitle('Accueil');
 Website::setDescription("page d'accueil de CraftMyWebsite");
 ?>
 <div class="mt-20 sm:mt-0 hero-section relative">
+    <?php var_dump(ThemeModel::getInstance()->fetchConfigValue('img-hero')); ?>
     <div class="mx-auto shadow-md rounded-lg overflow-hidden relative">
         <img class="mx-auto w-full h-[400px] rounded object-cover"
-             alt="Background"
-             src="<?= EnvManager::getInstance()->getValue("PATH_SUBFOLDER") . 'Public/Themes/Feather/Assets/Img/photo-background.png' ?>">
+             src="<?= ThemeModel::getInstance()->fetchConfigValue('img-hero')?>">
         <div class="absolute bottom-5 left-5 text-shadow-lg flex flex-col items-start">
             <h2 class="text-2xl font-bold z-[1]" style="color: <?= ThemeModel::getInstance()->fetchConfigValue('title-color') ?>">
                 <?= ThemeModel::getInstance()->fetchConfigValue('title-text') ?></h2>

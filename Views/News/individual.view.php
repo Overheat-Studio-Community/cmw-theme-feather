@@ -1,17 +1,17 @@
 <?php
 
 use CMW\Controller\Users\UsersController;
-use CMW\Entity\News\NewsEntity;
 use CMW\Manager\Env\EnvManager;
 use CMW\Manager\Security\SecurityManager;
+use CMW\Model\Core\ThemeModel;
 use CMW\Utils\Website;
-use CMW\Controller\Users\UsersSessionsController;
-use CMW\Model\News\NewsModel;
 use CMW\Model\News\NewsTagsModel;
 
 $subfolder = EnvManager::getInstance()->getValue('PATH_SUBFOLDER');
 
 /* TITRE ET DESCRIPTION */
+/* @var $news \CMW\Model\News\NewsModel */
+
 Website::setTitle($news->getTitle());
 Website::setDescription($news->getDescription());
 ?>
@@ -25,7 +25,7 @@ Website::setDescription($news->getDescription());
         <div class="flex flex-col md:flex-row">
             <!-- Contenu principal -->
             <article class="flex-1 flex flex-col space-y-4">
-                <div class="article-content break-words overflow-hidden text-wrap max-w-xl bg-gray-300">
+                <div class="article-content break-words overflow-hidden text-wrap max-w-xl" style="background-color: <?= ThemeModel::getInstance()->fetchConfigValue('news-bg-color') ?>; color: <?= ThemeModel::getInstance()->fetchConfigValue('news-text-color') ?>">
                     <p class="text-wrap"><?= $news->getContent() ?></p>
                 </div>
 
@@ -57,7 +57,7 @@ Website::setDescription($news->getDescription());
             <!-- Barre latérale sticky -->
             <aside class="top-20">
                 <div class=" mt-2 fixed py-2 px-6 rounded max-h-10">
-                    <h3 class="text-md font-semibold mb-2">À propos de l'auteur</h3>
+                    <h3 class="text-md font-semibold mb-2" style="background-color: <?= ThemeModel::getInstance()->fetchConfigValue('news-bg-color') ?>; color:<?= ThemeModel::getInstance()->fetchConfigValue('news-text-color') ?>">À propos de l'auteur</h3>
                     <div class="flex text-gray-600 items-center gap-2 text-sm">
                         <img class="w-8 h-8 rounded-full"
                              src="<?= $news->getAuthor()?->getUserPicture()?->getImage() ?: EnvManager::getInstance()->getValue("DEFAULT_PROFILE_PICTURE") ?>"

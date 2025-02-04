@@ -2,7 +2,7 @@
 return [
     // Couleur de fond globale
     'background-color' => '#FFFFFF',
-    'logo-global' => '/Public/Themes/Feather/Assets/img/logo.png',
+    'logo-global' => 'Config/Default/Img/CMW.png',
 
     // Header
     'header-bg-color' => '#00000040',
@@ -24,11 +24,24 @@ return [
 
 
     //Accueil
-    'img-hero' => '/Public/Themes/Feather/Assets/img/photo-background.png',
     'title-color' => '#FFFFFF',
     'title-text' => 'CMW',
     'description-color' => '#FFFFFF',
     'description-text' => 'CraftMyWebsite',
+    'img-hero' => 'Config/Default/Img/photo-background.png',
+
+    //Blog
+    'title-page-blog' => 'Blog',
+    'title-text-blog' => 'Blog',
+    'description-text-blog' => 'Vous trouverez ici les derniers blogs disponibles et mis en ligne.',
+    'title-color-blog' => '#FFFFFF',
+    'description-color-blog' => '#FFFFFF',
+
+
+    //News
+    'title-page-news' => 'News',
+    'news-bg-color' => '#FFFFFF',
+    'news-text-color' => '#000000',
 
     //Footer
     'footer-color' => '#000000',
