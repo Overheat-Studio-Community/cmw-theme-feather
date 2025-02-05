@@ -5,6 +5,7 @@ use CMW\Manager\Env\EnvManager;
 use CMW\Manager\Uploads\ImagesManager;
 use CMW\Manager\Views\View;
 use CMW\Utils\Website;
+use CMW\Model\Core\ThemeModel;
 
 /* @var CoreController $core */
 /* @var string $title */
@@ -47,7 +48,7 @@ $siteName = Website::getWebsiteName();
 
     <?php View::loadInclude($includes, 'styles'); ?>
 </head>
-<body class="min-h-screen bg-main text-color font-lato flex flex-col min-h-screen mx-2 mt-2">
+<body class="text-color font-lato flex flex-col min-h-screen mx-2 mt-2" style="background-color: <?= ThemeModel::getInstance()->fetchConfigValue('background-color') ?>">
 
 <?php
 View::loadInclude($includes, 'beforeScript');
