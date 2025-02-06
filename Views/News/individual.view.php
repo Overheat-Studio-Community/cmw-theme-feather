@@ -17,7 +17,7 @@ Website::setDescription($news->getDescription());
 ?>
 <section class="pb-1 mt-20 flex justify-center">
     <section class="flex w-full max-w-5xl flex-col gap-6 text-black">
-        Blog / <?= $news->getTitle() ?>
+        <?= ThemeModel::getInstance()->fetchConfigValue('title-page-blog') ?> / <?= $news->getTitle() ?>
         <p class="text-3xl text-black"><?= $news->getTitle() ?></p>
         <div class="flex justify-center">
             <img src="<?= $news->getImageLink() ?>" class="rounded-lg w-auto" alt="<?= $news->getTitle() ?>">

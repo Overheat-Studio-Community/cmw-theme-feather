@@ -8,34 +8,34 @@ use CMW\Model\Core\ThemeModel;
 
 $tags = NewsTagsModel::getInstance()->getTags();
 
-
+$primarycolor = ThemeModel::getInstance()->fetchConfigValue('color-primary');
+$secondarycolor = ThemeModel::getInstance()->fetchConfigValue('color-secondary');
 
 Website::setTitle('Accueil');
 Website::setDescription("page d'accueil de CraftMyWebsite");
 ?>
 <div class="mt-20 sm:mt-0 hero-section relative">
-    <?php var_dump(ThemeModel::getInstance()->fetchConfigValue('img-hero')); ?>
     <div class="mx-auto shadow-md rounded-lg overflow-hidden relative">
         <img class="mx-auto w-full h-[400px] rounded object-cover"
-             src="<?= ThemeModel::getInstance()->fetchConfigValue('img-hero')?>">
+             src="<?= ThemeModel::getInstance()->fetchImageLink('img-hero')?>">
         <div class="absolute bottom-5 left-5 text-shadow-lg flex flex-col items-start">
-            <h2 class="text-2xl font-bold z-[1]" style="color: <?= ThemeModel::getInstance()->fetchConfigValue('title-color') ?>">
+            <h2 class="text-2xl font-bold z-[1]" style="color: <?= ThemeModel::getInstance()->fetchConfigValue('color-primary') ?>">
                 <?= ThemeModel::getInstance()->fetchConfigValue('title-text') ?></h2>
-            <p class="leading-4 text-base mt-0 sm:ml- md:max-w-80 xl:max-w-96 sm:mt-2 sm:ml-0 z-[1]" style="color: <?= ThemeModel::getInstance()->fetchConfigValue('description-color')?>"><?= ThemeModel::getInstance()->fetchConfigValue('description-text') ?></p>
+            <p class="leading-4 text-base mt-0 sm:ml- md:max-w-80 xl:max-w-96 sm:mt-2 sm:ml-0 z-[1]" style="color: <?= ThemeModel::getInstance()->fetchConfigValue('color-primary')?>"><?= ThemeModel::getInstance()->fetchConfigValue('description-text') ?></p>
             <div class="absolute inset-0 bg-black/25 blur-xl"></div>
         </div>
     </div>
 </div>
-<h2 class="mt-6 text-3xl">
-    Blog
+<h2 class="mt-6 text-3xl" style="color:<?= $primarycolor ?>">
+    <?= ThemeModel::getInstance()->fetchConfigValue('title-page-blog') ?>
 </h2>
-<h3 class="text-xl mt-3 text-gray-600">
-    Vous trouverez ici les derniers blogs disponibles et mis en ligne.
+<h3 class="text-xl mt-3" style="color:<?= $secondarycolor ?>">
+    <?= ThemeModel::getInstance()->fetchConfigValue('description-text-blog') ?>
 </h3>
 <nav class="z-30 flex my-2 items-center">
     <a href="#" class="tag-filter hidden md:block rounded mr-2 px-4 py-2 text-black">All</a>
     <?php foreach ($tags as $tag) : ?>
-        <a href="#" class="tag-filter hidden md:block rounded mr-2 px-4 py-2 bg-white text-black"
+        <a href="#" class="tag-filter hidden md:block rounded mr-2 px-4 py-2 text-black"
            data-tag="<?= $tag->getId() ?>">
             <?= $tag->getName() ?>
         </a>
@@ -55,7 +55,7 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
             </div>
         </div>
         <div class="flex items-center mt-3 md:mt-0">
-            <span class="text-gray-500 mr-2">Sort by:</span>
+            <span class="mr-2" style="color: <?= $secondarycolor ?>">Sort by:</span>
             <select id="sortOrder" class="rounded bg-white border-solid border border-gray-100 px-2 py-1 text-black"
                     onchange="sortNews()">
                 <option value="DESC" selected>Récent</option>
@@ -64,7 +64,7 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
         </div>
     </div>
 </nav>
-
+<!-- Si le nombre de page est égal à 1, on cache les boutons de pagination -->
 <div id="newsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl w-full mx-auto"></div>
 <div class="flex pagination justify-center gap-8 mt-4">
     <button id="prevPage" class="prev bg-gray-300 px-4 py-2 rounded" onclick="changePage('prev')">Précédent</button>
@@ -94,6 +94,8 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
         </div>
     </div>
     `;
+
+
 
         let url = `<?= EnvManager::getInstance()->getValue('PATH_URL') ?>api/news/page/${page}/?limit=${limit}&order=${order}`;
         if (tag !== null) {
@@ -130,26 +132,26 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
             let tagOffset = 1;
             let tagsHTML = article.tags.map(tag => {
                 let tagHTML = `
-            <div class="absolute bg-gray-300 opacity-90 text-white text-xs rounded-2xl px-2 py-1" style="top: ${tagOffset}rem; left: 0.5rem;">
+            <div class="absolute bg-gray-300 opacity-90 text-white text-xs rounded-2xl px-2 py-1" style="top:1rem; left: ${tagOffset}rem;">
                 ${tag.name}
             </div>
         `;
-                tagOffset += 2;
+                tagOffset +=6;
                 return tagHTML;
             }).join('');
             articleElement.innerHTML = `
-        <a href="${article.articleLink}" class="block w-[90%] rounded-lg relative">
+        <a href="${article.articleLink}" class="block w-[90%] rounded-lg relative" style="background-color: <?= ThemeModel::getInstance()->fetchConfigValue('bg-card') ?>">
             <div class="mx-auto w-full object-cover">
                 ${tagsHTML}
                 <img class="mx-auto w-full h-48 rounded object-cover" src="${article.imageLink}" alt="Image de l'article">
                 <div class="p-4">
-                    <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                    <span class="text-sm bg-gray-100 px-2 py-1 rounded" style="color:<?= $secondarycolor ?>">
                         ${article.dateCreated}
                     </span>
-                    <h2 class="text-lg font-semibold text-gray-800 mt-2">
+                    <h2 class="text-lg font-semibold text-gray-800 mt-2" style="color:<?= $primarycolor ?>">
                         ${article.title}
                     </h2>
-                    <p class="text-sm text-gray-600 mt-2">
+                    <p class="text-sm text-gray-600 mt-2" style="color:<?= $secondarycolor ?>">
                         ${article.description}
                     </p>
                     <div class="flex items-center mt-4">
@@ -157,7 +159,7 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
                             <img class="rounded-full" src="${article.authorImageLink}" alt="Auteur">
                         </div>
                         <div class="ml-3">
-                            <p class="text-sm font-medium text-gray-800">
+                            <p class="text-sm font-medium" style="color:<?= $primarycolor ?>">
                                 ${article.authorPseudo}
                             </p>
                         </div>
@@ -171,8 +173,8 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
                 container.appendChild(articleElement);
             }
         });
-
-        document.getElementById('currentPage').textContent = `Page ${page}`;
+        let totalPages = Math.ceil(res.total / limit);
+        document.getElementById('currentPage').textContent = `Page ${page} / ${totalPages}`;
     };
 
     const changePage = (direction) => {
@@ -184,7 +186,38 @@ Website::setDescription("page d'accueil de CraftMyWebsite");
         }
 
         getArticles(currentPage, sortOrder, activeTag);
+
+        // Disable the "Prev" button if on the first page
+        document.getElementById('prevPage').disabled = (currentPage === 1);
+
+        if (direction ==='next' && currentPage > 1) {
+            document.getElementById('prevPage').disabled = false;
+        }
+
     };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getArticles(currentPage);
+
+        const sortOrder = document.getElementById('sortOrder');
+        sortOrder.addEventListener('change', () => {
+            getArticles(currentPage, sortOrder.value, activeTag);
+        });
+
+        document.querySelectorAll('.tag-filter').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                setActiveTag(el.getAttribute('data-tag'));
+            });
+        });
+
+        document.getElementById('tagSelect').addEventListener('change', (e) => {
+            setActiveTag(e.target.value);
+        });
+
+        // Initial check to disable the "Prev" button if on the first page
+        document.getElementById('prevPage').disabled = (currentPage === 1);
+    });
 
     const setActiveTag = (tag) => {
         activeTag = tag;

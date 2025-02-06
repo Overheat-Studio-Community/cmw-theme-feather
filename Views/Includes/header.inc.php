@@ -5,287 +5,301 @@ use CMW\Controller\Users\UsersSessionsController;
 use CMW\Manager\Env\EnvManager;
 use CMW\Model\Core\MenusModel;
 use CMW\Model\Core\ThemeModel;
+use CMW\Utils\Website;
 
 $subfolder = EnvManager::getInstance()->getValue('PATH_SUBFOLDER');
 $usersession = UsersSessionsController::getInstance()->getCurrentUser();
 $userlog = UsersController::isUserLogged();
 $menus = MenusModel::getInstance();
-?>
-    <nav class="z-50 text-white absolute w-full top-0 left-0">
-        <div class="absolute inset-0 bg-black/25 blur-xl"
-             style="background-color: <?= ThemeModel::getInstance()->fetchConfigValue('header-bg-color') ?>"></div>
-        <!-- Titre & différentes Catégories -->
-        <div class="flex justify-between items-center mt-3 mx-4 relative">
-            <div id="navbar-elements" class="text-sm sm:text-lg text-black font-bold text-nowrap"
-                 style="color: <?= ThemeModel::getInstance()->fetchConfigValue('navbar-text-color') ?>">
-                <?= ThemeModel::getInstance()->fetchConfigValue('title-text') ?>
-            </div>
-            <ul class="hidden lg:flex space-x-4"
-                style="color: <?= ThemeModel::getInstance()->fetchConfigValue('navbar-text-color') ?>">
-                <?php foreach ($menus->getMenus() as $menu): ?>
-                    <?php if ($menu->isUserAllowed()): ?>
-                        <li>
-                            <a href="<?= $menu->getUrl() ?>" <?= !$menu->isTargetBlank() ?: "target='_blank'" ?>
-                               style="color: inherit; text-decoration: none; transition: color 0.3s;"
-                               onmouseover="this.style.color='<?= ThemeModel::getInstance()->fetchConfigValue('navbar-text-hover-color') ?>'"
-                               onmouseout="this.style.color='<?= ThemeModel::getInstance()->fetchConfigValue('navbar-text-color') ?>'">
-                                <?= $menu->getName() ?>
-                            </a>
-                        </li>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-            </ul>
+$primarycolor = ThemeModel::getInstance()->fetchConfigValue('color-primary');
+$secondarycolor = ThemeModel::getInstance()->fetchConfigValue('color-secondary');
 
-            <!-- Recherche -->
-            <div>
-                <div class="sm:bg-white w-full justify-center flex items-center rounded-lg overflow-hidden"
-                     style="background-color: <?= ThemeModel::getInstance()->fetchConfigValue('search-bar-color') ?>"
-                     id="search-container">
-                    <input type="search"
-                           class="hidden w-full sm:flex sm:flex-grow px-4 py-2 text-black focus:outline-none transition-all duration-300 max-w-[400px]"
-                           style="background-color: <?= ThemeModel::getInstance()->fetchConfigValue('search-bar-color') ?>"
-                           placeholder="Search" aria-label="Search" id="search-input" aria-describedby="button-addon2"/>
-                    <span class="hidden sm:flex items-center justify-center px-4 cursor-pointer">
+
+?>
+
+<nav class="z-50 text-white absolute w-full top-0 left-0">
+    <div class="absolute inset-0 opacity-25 blur-xl bg-black/25"></div>
+    <!-- Titre & différentes Catégories -->
+    <div class="flex justify-between items-center mt-3 mx-4 relative">
+        <div id="navbar-elements" class="flex items-center gap-2 text-sm sm:text-lg font-bold text-nowrap"
+             style="color: <?= $primarycolor ?>">
+            <?php if (ThemeModel::getInstance()->fetchConfigValue('header_active_logo')): ?>
+                <img src="<?= ThemeModel::getInstance()->fetchImageLink('header_img_logo') ?>"
+                     class="mr-3 w-10" alt="Logo">
+            <?php endif; ?>
+            <?php if (ThemeModel::getInstance()->fetchConfigValue('header_active_title')): ?>
+                <?= Website::getWebsiteName() ?>
+            <?php endif; ?>
+        </div>
+        <ul class="hidden lg:flex space-x-4"
+            style="color: <?= $primarycolor ?>">
+            <?php foreach ($menus->getMenus() as $menu): ?>
+                <?php if ($menu->isUserAllowed()): ?>
+                    <li>
+                        <a href="<?= $menu->getUrl() ?>" <?= !$menu->isTargetBlank() ?: "target='_blank'" ?>
+                           style="color: inherit; text-decoration: none; transition: color 0.3s;"
+                           onmouseover="this.style.color='<?= $primarycolor ?>'"
+                           onmouseout="this.style.color='<?= $primarycolor ?>'">
+                            <?= $menu->getName() ?>
+                        </a>
+                    </li>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </ul>
+
+        <!-- Recherche -->
+        <div>
+            <div class="sm:bg-white w-full justify-center flex items-center rounded-lg overflow-hidden"
+                 id="search-container">
+                <input type="search"
+                       class="hidden w-full sm:flex sm:flex-grow px-4 py-2 text-black focus:outline-none transition-all duration-300 max-w-[400px]"
+                       style="background-color: <?= ThemeModel::getInstance()->fetchConfigValue('search-bar-color') ?>"
+                       placeholder="Search" aria-label="Search" id="search-input" aria-describedby="button-addon2"/>
+                <span class="hidden sm:flex items-center justify-center px-4 cursor-pointer">
                     <i class="fa-solid fa-magnifying-glass text-black"></i>
                 </span>
-                    <span class="sm:hidden flex items-center justify-center px-4 cursor-pointer py-2" id="button-addon2"
-                          onclick="toggleSearchBar()">
+                <span class="sm:hidden flex items-center justify-center px-4 cursor-pointer py-2" id="button-addon2"
+                      onclick="toggleSearchBar()">
                     <i class="fa-solid fa-magnifying-glass text-black"></i>
                 </span>
-                    <!-- Croix de fermeture -->
-                    <span class="hidden flex items-center justify-center px-4 cursor-pointer text-black"
-                          id="close-search-btn" onclick="closeSearchBar()">
+                <!-- Croix de fermeture -->
+                <span class="hidden flex items-center justify-center px-4 cursor-pointer text-black"
+                      id="close-search-btn" onclick="closeSearchBar()">
                     <i class="fa-solid fa-xmark"></i>
                 </span>
-                </div>
-                <!-- Conteneur pour les résultats de recherche -->
-                <div id="search-results-container"
-                     class="hidden absolute w-full sm:max-w-[16rem] sm:mt-2 min-w-max shadow-lg rounded-lg mt-12 z-50"
-                     style="background-color: <?= ThemeModel::getInstance()->fetchConfigValue('search-bar-color') ?>"></div>
             </div>
+            <!-- Conteneur pour les résultats de recherche -->
+            <div id="search-results-container"
+                 class="hidden absolute w-full sm:max-w-[16rem] sm:mt-2 min-w-max shadow-lg rounded-lg mt-12 z-50"
+                 style="background-color: <?= ThemeModel::getInstance()->fetchConfigValue('search-bar-color') ?>"></div>
+        </div>
 
-            <!-- Profile -->
-            <?php if ($userlog): ?>
-                <div class="flex flex-col gap-4 relative">
-                    <div class="flex items-center gap-2 cursor-pointer" id="profile-toggle">
-                    <span class="hidden sm:flex" id="navbar-elements"
-                          style="color: <?= ThemeModel::getInstance()->fetchConfigValue('navbar-text-color') ?>">
-                        <?= $usersession->getPseudo(); ?>
-                    </span>
-                        <img id="navbar-elements" class="w-8 h-8 rounded-full"
-                             src="<?= $usersession->getUserPicture()->getImage(); ?>"
-                             alt="User Profile">
-                    </div>
+        <!-- Profile -->
+        <?php if ($userlog): ?>
+            <div class="flex flex-col gap-4 relative">
+                <div class="flex items-center gap-2 cursor-pointer" id="profile-toggle">
+            <span class="hidden sm:flex"
+                  style="color:<?= $primarycolor ?>">
+                <?= $usersession->getPseudo(); ?>
+            </span>
+                    <img class="w-8 h-8 rounded-full"
+                         src="<?= $usersession->getUserPicture()->getImage(); ?>"
+                         alt="User Profile">
                 </div>
-                <!-- Menu Profile -->
-                <div class="w-full sm:transform absolute mt-20 right-0">
-                    <div id="profile-menu"
-                         class="z-50 hidden flex w-full sm:max-w-[16rem] sm:ml-auto flex-col bg-white shadow-lg rounded mt-20 right-0
-                     transition duration-300 ease-in-out transform scale-95 opacity-0"
-                         style="background-color: <?= ThemeModel::getInstance()->fetchConfigValue('profile-bg-color') ?>">
-                        <a href="<?= $subfolder ?>profile"
-                           class="block px-4 py-2 text-black hover:bg-gray-100"
-                           style="color: <?= ThemeModel::getInstance()->fetchConfigValue('profile-text-color') ?> ">
-                            <i class="<?= ThemeModel::getInstance()->fetchConfigValue('feature_img_2') ?>"
-                               style="color: <?= ThemeModel::getInstance()->fetchConfigValue('profile-text-color') ?> "></i>
-                            <?= ThemeModel::getInstance()->fetchConfigValue('feature_title_2') ?>
-                        </a>
-                        <?php if (UsersController::isAdminLogged()) : ?>
-                            <a href="<?= $subfolder ?>cmw-admin"
-                               class="block px-4 py-2 text-black hover:bg-gray-100"
-                               style="color: <?= ThemeModel::getInstance()->fetchConfigValue('profile-text-color') ?> ">
-                                <i class="<?= ThemeModel::getInstance()->fetchConfigValue('feature_img_1') ?>"
-                                   style="color: <?= ThemeModel::getInstance()->fetchConfigValue('profile-text-color') ?> "></i>
-                                <?= ThemeModel::getInstance()->fetchConfigValue('feature_title_1') ?>
-                            </a>
-                        <?php endif; ?>
-                        <a href="<?= $subfolder ?>logout"
-                           class="block px-4 py-2 text-newred hover:bg-gray-100">
-                            <i class="<?= ThemeModel::getInstance()->fetchConfigValue('feature_img_3') ?>"></i> <?= ThemeModel::getInstance()->fetchConfigValue('feature_title_3') ?>
-                        </a>
-                    </div>
-                </div>
-            <?php else: ?>
-                <div class="hidden md:flex gap-2">
-                    <a href="<?= $subfolder ?>register"
-                       class="bg-white hover:bg-white text-blue-500 py-2 px-4 rounded">
-                        Sign Up
+            </div>
+            <!-- Menu Profile -->
+            <div class="w-full sm:transform absolute mt-20 right-0">
+                <div id="profile-menu"
+                     class="z-50 hidden flex w-full sm:max-w-[16rem] sm:ml-auto flex-col bg-white shadow-lg rounded mt-20 right-0 transition duration-300 ease-in-out opacity-0"
+                     style="background-color: <?= ThemeModel::getInstance()->fetchConfigValue('header_bg_color') ?>">
+                    <a href="<?= $subfolder ?>profile"
+                       class="hover:bg-gray-100 block px-4 py-2"
+                       style="color: <?= $primarycolor ?>; text-decoration: none; transition: color 0.3s;"
+                       onmouseover="this.style.color='<?= $hoverprimarycolor ?>'"
+                       onmouseout="this.style.color='<?= $primarycolor ?>'">
+
+                    <i class="<?= ThemeModel::getInstance()->fetchConfigValue('feature_img_2') ?>"
+                           style="color: <?= $primarycolor ?>"></i>
+                        <?= ThemeModel::getInstance()->fetchConfigValue('feature_title_2') ?>
                     </a>
-                    <a href="<?= $subfolder ?>login"
-                       class="bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded">
-                        Connexion
+                    <?php if (UsersController::isAdminLogged()) : ?>
+                        <a href="<?= $subfolder ?>cmw-admin"
+                           class="block px-4 py-2 hover:bg-gray-100"
+                           style="color: <?= $primarycolor ?>; text-decoration: none; transition: color 0.3s;"
+                           onmouseover="this.style.color='<?= $hoverprimarycolor ?>'"
+                           onmouseout="this.style.color='<?= $primarycolor ?>'">
+                            <i class="<?= ThemeModel::getInstance()->fetchConfigValue('feature_img_1') ?>"
+                               style="color: <?= $primarycolor ?>"></i>
+                            <?= ThemeModel::getInstance()->fetchConfigValue('feature_title_1') ?>
+                        </a>
+                    <?php endif; ?>
+
+                    <a href="<?= $subfolder ?>logout"
+                       class="block px-4 py-2 text-newred hover:bg-gray-100"
+                       style="text-decoration: none;">
+                        <i class="<?= ThemeModel::getInstance()->fetchConfigValue('feature_img_3') ?>"
+                           ></i> <?= ThemeModel::getInstance()->fetchConfigValue('feature_title_3') ?>
                     </a>
                 </div>
-            <?php endif; ?>
+            </div>
+        <?php else: ?>
+            <div class="hidden md:flex gap-2">
+                <a href="<?= $subfolder ?>register"
+                   class="bg-white hover:bg-white text-blue-500 py-2 px-4 rounded">
+                    Sign Up
+                </a>
+                <a href="<?= $subfolder ?>login"
+                   class="bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded">
+                    Connexion
+                </a>
+            </div>
+        <?php endif; ?>
 
-            <div class="z-50 flex lg:hidden flex-col justify-center">
-                <div>
-                    <nav>
-                        <!-- Bouton burger -->
-                        <button id="burger-toggle"
-                                class="text-gray-500 sm:text-white w-10 h-10 relative focus:outline-none">
-                            <i class="fa-solid fa-bars"></i>
-                        </button>
-                        <!-- Menu -->
-                        <div id="burger-menu" class="hidden w-full sm:transform absolute top-15 right-0">
-                            <ul class="w-full sm:flex-row sm:max-w-[16rem] sm:ml-auto flex-col space-y-4 bg-white p-4 shadow-lg rounded right-0">
+        <div class="z-50 flex lg:hidden flex-col justify-center">
+            <div>
+                <nav>
+                    <!-- Bouton burger -->
+                    <button id="burger-toggle"
+                            class="text-gray-500 sm:text-white w-10 h-10 relative focus:outline-none">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <!-- Menu -->
+                    <div id="burger-menu" class="hidden w-full sm:transform absolute top-15 right-0">
+                        <ul class="w-full sm:flex-row sm:max-w-[16rem] sm:ml-auto flex-col space-y-4 bg-white p-4 shadow-lg rounded right-0">
 
-                                <?php foreach ($menus->getMenus() as $menu): ?>
-                                    <?php if ($menu->isUserAllowed()): ?>
-                                        <li>
-                                            <a href="<?= $menu->getUrl() ?>" <?= !$menu->isTargetBlank() ?: "target='_blank'" ?>
-                                               class="text-black"><?= $menu->getName() ?></a>
-                                        </li>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
-                                <?php if (!$userlog): ?>
+                            <?php foreach ($menus->getMenus() as $menu): ?>
+                                <?php if ($menu->isUserAllowed()): ?>
                                     <li>
-                                        <a href="<?= $subfolder ?>register"
-                                           class="flex md:hidden bg-white/50 text-blue-500 py-2 px-4 rounded">
-                                            Sign Up
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="<?= $subfolder ?>login"
-                                           class="flex md:hidden bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded">
-                                            Connexion
-                                        </a>
+                                        <a href="<?= $menu->getUrl() ?>" <?= !$menu->isTargetBlank() ?: "target='_blank'" ?>
+                                           class="text-black"><?= $menu->getName() ?></a>
                                     </li>
                                 <?php endif; ?>
-                            </ul>
-                        </div>
-                    </nav>
-                </div>
+                            <?php endforeach; ?>
+                            <?php if (!$userlog): ?>
+                                <li>
+                                    <a href="<?= $subfolder ?>register"
+                                       class="flex md:hidden bg-white/50 text-blue-500 py-2 px-4 rounded">
+                                        Sign Up
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="<?= $subfolder ?>login"
+                                       class="flex md:hidden bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded">
+                                        Connexion
+                                    </a>
+                                </li>
+                            <?php endif; ?>
+                        </ul>
+                    </div>
+                </nav>
             </div>
         </div>
-    </nav>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggle = document.getElementById('profile-toggle');
-            const menu = document.getElementById('profile-menu');
-            if (toggle && menu) {
-                toggle.addEventListener('click', () => {
-                    menu.classList.toggle('hidden');
-                    menu.classList.toggle('scale-95');
-                    menu.classList.toggle('opacity-0');
-                });
+    </div>
+</nav>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggle = document.getElementById('profile-toggle');
+        const menu = document.getElementById('profile-menu');
+        if (toggle && menu) {
+            toggle.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+                menu.classList.toggle('scale-95');
+                menu.classList.toggle('opacity-0');
+            });
 
-                document.addEventListener('click', (event) => {
-                    if (!toggle.contains(event.target) && !menu.contains(event.target)) {
-                        menu.classList.add('hidden', 'scale-95', 'opacity-0');
-                    }
-                });
-            }
-
-            const burgerToggle = document.getElementById('burger-toggle');
-            const burgerMenu = document.getElementById('burger-menu');
-            if (burgerToggle && burgerMenu) {
-                burgerToggle.addEventListener('click', () => {
-                    burgerMenu.classList.toggle('hidden');
-                });
-
-                document.addEventListener('click', (event) => {
-                    if (!burgerToggle.contains(event.target) && !burgerMenu.contains(event.target)) {
-                        burgerMenu.classList.add('hidden');
-                    }
-                });
-            }
-
-            const searchToggle = document.getElementById('button-addon2');
-            const searchInput = document.getElementById('search-input');
-            const closeBtn = document.getElementById('close-search-btn');
-            const navbarElements = document.getElementById('navbar-elements');
-            const searchContainer = document.getElementById('search-container');
-
-            if (searchToggle && searchInput && closeBtn && navbarElements && searchContainer) {
-                searchToggle.addEventListener('click', () => {
-                    searchInput.classList.remove('hidden');
-                    searchInput.focus();
-                    closeBtn.classList.remove('hidden');
-                    searchContainer.classList.add('absolute', 'top-0', 'left-0', 'w-full', 'bg-white', 'opacity-100');
-                    navbarElements.classList.add('hidden');
-                    burgerMenu?.classList.add('hidden');
-                    toggle?.classList.add('hidden');
-                    burgerToggle?.classList.add('hidden');
-                });
-
-                closeBtn.addEventListener('click', () => {
-                    searchInput.classList.add('hidden');
-                    closeBtn.classList.add('hidden');
-                    searchContainer.classList.remove('absolute', 'top-0', 'left-0', 'w-full', 'bg-white', 'opacity-100');
-                    navbarElements.classList.remove('hidden');
-                    burgerMenu?.classList.remove('hidden');
-                    toggle?.classList.remove('hidden');
-                    burgerToggle?.classList.remove('hidden');
-                });
-            }
-        });
-
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const searchInput = document.getElementById('search-input');
-            const searchButton = document.getElementById('button-addon2');
-            const searchResultsContainer = document.getElementById('search-results-container');
-            const closeBtn = document.getElementById('close-search-btn');
-
-            const displayResults = (results) => {
-                searchResultsContainer.innerHTML = '';
-                if (results.length === 0) {
-                    searchResultsContainer.innerHTML = '<p class="p-4 text-gray-500">No results found</p>';
-                    return;
+            document.addEventListener('click', (event) => {
+                if (!toggle.contains(event.target) && !menu.contains(event.target)) {
+                    menu.classList.add('hidden', 'scale-95', 'opacity-0');
                 }
-                results.forEach(result => {
-                    const resultItem = document.createElement('div');
-                    resultItem.className = 'p-4 border-b border-gray-200';
-                    resultItem.innerHTML = `
+            });
+        }
+
+        const burgerToggle = document.getElementById('burger-toggle');
+        const burgerMenu = document.getElementById('burger-menu');
+        if (burgerToggle && burgerMenu) {
+            burgerToggle.addEventListener('click', () => {
+                burgerMenu.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', (event) => {
+                if (!burgerToggle.contains(event.target) && !burgerMenu.contains(event.target)) {
+                    burgerMenu.classList.add('hidden');
+                }
+            });
+        }
+
+        const searchToggle = document.getElementById('button-addon2');
+        const searchInput = document.getElementById('search-input');
+        const closeBtn = document.getElementById('close-search-btn');
+        const navbarElements = document.getElementById('navbar-elements');
+        const searchContainer = document.getElementById('search-container');
+
+        if (searchToggle && searchInput && closeBtn && navbarElements && searchContainer) {
+            searchToggle.addEventListener('click', () => {
+                searchInput.classList.remove('hidden');
+                searchInput.focus();
+                closeBtn.classList.remove('hidden');
+                searchContainer.classList.add('absolute', 'top-0', 'left-0', 'w-full', 'bg-white', 'opacity-100');
+                navbarElements.classList.add('hidden');
+                burgerMenu?.classList.add('hidden');
+                toggle?.classList.add('hidden');
+                burgerToggle?.classList.add('hidden');
+            });
+
+            closeBtn.addEventListener('click', () => {
+                searchInput.classList.add('hidden');
+                closeBtn.classList.add('hidden');
+                searchContainer.classList.remove('absolute', 'top-0', 'left-0', 'w-full', 'bg-white', 'opacity-100');
+                navbarElements.classList.remove('hidden');
+                burgerMenu?.classList.remove('hidden');
+                toggle?.classList.remove('hidden');
+                burgerToggle?.classList.remove('hidden');
+            });
+        }
+    });
+
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('button-addon2');
+        const searchResultsContainer = document.getElementById('search-results-container');
+        const closeBtn = document.getElementById('close-search-btn');
+
+        const displayResults = (results) => {
+            searchResultsContainer.innerHTML = '';
+            if (results.length === 0) {
+                searchResultsContainer.innerHTML = '<p class="p-4 text-gray-500">No results found</p>';
+                return;
+            }
+            results.forEach(result => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'p-4 border-b border-gray-200 bg-white';
+                resultItem.innerHTML = `
 <a href="${result.articleLink}" class="block text-black hover:bg-gray-100" style="background-color: transparent;" onmouseover="this.style.backgroundColor='<?= ThemeModel::getInstance()->fetchConfigValue('element-search-hover-color') ?>'" onmouseout="this.style.backgroundColor='transparent'">
-                    <h3 class="font-semibold" style="color: <?= ThemeModel::getInstance()->fetchConfigValue('element-search-title-color') ?>">${result.title}</h3>
-                    <p class="text-sm text-gray-600" style="color:<?= ThemeModel::getInstance()->fetchConfigValue('element-search-text-color') ?>" >${result.description}</p>
+                    <h3 class="font-semibold" style="color: <?= $primarycolor ?>">${result.title}</h3>
+                    <p class="text-sm text-gray-600" style="color:<?= ThemeModel::getInstance()->fetchConfigValue('color-secondary') ?>" >${result.description}</p>
                 </a>
             `;
-                    searchResultsContainer.appendChild(resultItem);
-                });
-                searchResultsContainer.classList.remove('hidden');
-            };
+                searchResultsContainer.appendChild(resultItem);
+            });
+            searchResultsContainer.classList.remove('hidden');
+        };
 
-            const searchNews = async (query) => {
-                const encodedQuery = btoa(query); // Encode the query in base64
-                const response = await fetch(`<?= EnvManager::getInstance()->getValue('PATH_URL') ?>api/news/search/${encodedQuery}`);
-                const data = await response.json();
-                displayResults(data.news);
-            };
+        const searchNews = async (query) => {
+            const encodedQuery = btoa(query); // Encode the query in base64
+            const response = await fetch(`<?= EnvManager::getInstance()->getValue('PATH_URL') ?>api/news/search/${encodedQuery}`);
+            const data = await response.json();
+            displayResults(data.news);
+        };
 
-            if (searchInput && searchButton) {
-                searchButton.addEventListener('click', () => {
+        if (searchInput && searchButton) {
+            searchButton.addEventListener('click', () => {
+                const query = searchInput.value.trim();
+                if (query) {
+                    searchNews(query);
+                }
+            });
+
+            searchInput.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
                     const query = searchInput.value.trim();
                     if (query) {
                         searchNews(query);
                     }
-                });
+                }
+            });
 
-                searchInput.addEventListener('keypress', (event) => {
-                    if (event.key === 'Enter') {
-                        const query = searchInput.value.trim();
-                        if (query) {
-                            searchNews(query);
-                        }
-                    }
-                });
+            closeBtn.addEventListener('click', () => {
+                searchResultsContainer.classList.add('hidden');
+            });
 
-                closeBtn.addEventListener('click', () => {
+            document.addEventListener('click', (event) => {
+                if (!searchInput.contains(event.target) && !searchResultsContainer.contains(event.target)) {
                     searchResultsContainer.classList.add('hidden');
-                });
+                }
+            });
+        }
+    });
+</script>
 
-                document.addEventListener('click', (event) => {
-                    if (!searchInput.contains(event.target) && !searchResultsContainer.contains(event.target)) {
-                        searchResultsContainer.classList.add('hidden');
-                    }
-                });
-            }
-        });
-    </script>
-
-<?php
-// Closing PHP tag added
-?>
